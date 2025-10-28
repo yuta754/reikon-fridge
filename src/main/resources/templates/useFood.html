@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>消費量入力</title>
+	<!-- Bootstrap -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        :root {
+            --primary-color: #0077b6; /* 濃い青 */
+            --secondary-color: #00b4d8; /* 水色 */
+            --accent-color: #e63946; /* 強調色（エラーなどに） */
+            --gradient-top: #cce7ff;
+            --gradient-middle: #f9fcff;
+            --gradient-bottom: #ffffff;
+            --form-background: #ffffff;
+            --input-border: #cccccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Noto Sans JP', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, var(--gradient-top), var(--gradient-middle), var(--gradient-bottom));
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .card {
+            background-color: var(--form-background);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 2em;
+            font-weight: 700;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logout-button {
+            background-color: #e2e8f0;
+            color: #333;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.9em;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .logout-button:hover {
+            background-color: #cbd5e1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background: #f9fafb;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 8px rgba(0, 180, 216, 0.3);
+            outline: none;
+        }
+
+        .button {
+            width: 200px;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 119, 182, 0.3);
+        }
+
+        .button:hover {
+            background-color: #005a8a;
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 0.95em;
+            text-align: center;
+        }
+
+        .fraction-btn {
+            background-color: #f1f5f9;
+            color: #333;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-top: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .fraction-btn:hover {
+            background-color: #e2e8f0;
+        }
+
+    /* モーダルボタン */
+    .btn-primary {
+      background-color: var(--primary-color);
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: #005a8a;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="header-controls">
+            <form action="/selectFood" method="get">
+                <button type="submit" class="logout-button">↩ 戻る</button>
+            </form>
+        </div>
+
+        <h1>消費量登録</h1>
+
+        <form id="myForm" action="/useFood" method="post" th:object="${updateFoodForm}">
+            <input type="hidden" th:field="*{genreId}" id="genre">
+            <input type="hidden" th:field="*{foodId}">
+
+            <div class="error-message" th:if="${message}" th:text="${message}"></div>
+
+            <div class="form-group">
+                <label>食材名</label>
+                <input type="text" th:field="*{foodName}" readonly style="background:#f1f5f9;">
+            </div>
+
+            <div class="form-group">
+                <label>消費量</label>
+                <div style="color: #ef4444; font-size:0.95em;">
+                    ( ※現在の在庫:
+                    <span th:if="*{amount != null}" th:text="*{amount}"></span>
+                    <span th:if="*{amount != null and bunbo != null}">と</span>
+                    <span th:if="*{bunbo != null}" th:text="*{bunbo} + '分の' + *{bunshi}"></span>
+                    )
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><input type="radio" name="radio" value="useAll"> 使い切った！</label>
+
+                <label>
+                    <input type="radio" name="radio" value="useSeisu">
+                    <input type="number" name="seisu" min="1" style="width:90px;">
+                    <span id="unitLabel1">---</span>
+
+                    <span id="fractionInput" style="display:none;">
+                        と <input type="number" name="bunboSeisu" min="2" style="width:50px;"> 分の
+                        <input type="number" name="bunshiSeisu" min="1" style="width:50px;">
+                        <span id="unitLabel2">---</span>
+                    </span>
+
+                    <button type="button" class="fraction-btn" id="addFractionBtn">分数を追加</button>
+                </label>
+
+                <span id="addRadio">
+                    <label>
+                        <input type="radio" name="radio" value="useBunsu">
+                        <input type="number" name="bunboBunsu" min="2" style="width:50px;"> 分の
+                        <input type="number" name="bunshiBunsu" min="1" style="width:50px;">
+                        <span id="unitLabel3">---</span>
+                    </label>
+                </span>
+            </div>
+
+            <div style="text-align:center;">
+                <button type="button" class="button" data-bs-toggle="modal" data-bs-target="#modal">消費</button>
+            </div>
+        </form>
+    </div>
+
+  <!-- モーダル -->
+  <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalLabel">確認</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">消費量を確定してもよろしいですか？</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+          <button type="button" class="btn btn-primary" id="confirmSubmit">確定する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+    <script th:inline="javascript">
+        const unitMap = JSON.parse(/*[[${unitMapJson}]]*/ "null");
+        const genreSelect = document.getElementById("genre");
+        const unitLabel1 = document.getElementById("unitLabel1");
+        const unitLabel2 = document.getElementById("unitLabel2");
+        const unitLabel3 = document.getElementById("unitLabel3");
+        const addFractionBtn = document.getElementById("addFractionBtn");
+        const fractionInput = document.getElementById("fractionInput");
+        const hideFractionForGenres = ["1", "2", "4", "5", "7"];
+
+        genreSelect.addEventListener("change", function () {
+            const selectedId = this.value;
+            const unit = unitMap[selectedId] || "---";
+            unitLabel1.textContent = unit;
+            unitLabel2.textContent = unit;
+            unitLabel3.textContent = unit;
+
+            if (hideFractionForGenres.includes(selectedId)) {
+                addFractionBtn.style.display = "none";
+                fractionInput.style.display = "none";
+            } else {
+                addFractionBtn.style.display = "inline-block";
+            }
+        });
+
+        window.addEventListener("DOMContentLoaded", function () {
+            const selectedId = genreSelect.value;
+            const unit = unitMap[selectedId] || "---";
+            unitLabel1.textContent = unit;
+            unitLabel2.textContent = unit;
+            unitLabel3.textContent = unit;
+        });
+
+        addFractionBtn.addEventListener('click', () => {
+            const isVisible = fractionInput.style.display !== 'none';
+            fractionInput.style.display = isVisible ? 'none' : 'inline';
+            addFractionBtn.textContent = isVisible ? '分数を追加' : '分数を削除';
+        });
+
+  		// ======= 登録ボタン =======
+  		document.getElementById("confirmSubmit").addEventListener("click", function () {
+    		document.getElementById("myForm").submit();
+  		});
+  		
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+</body>
+</html>

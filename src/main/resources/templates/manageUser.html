@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+
+<head>
+	<meta charset="UTF-8">
+	<title>アカウント設定</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+	<style>
+		:root {
+			--primary-color: #0077b6;
+			--secondary-color: #00b4d8;
+			--gradient-top: #cce7ff;
+			--gradient-middle: #f9fcff;
+			--gradient-bottom: #ffffff;
+			--form-background: #ffffff;
+			--input-border: #cccccc;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+			background: linear-gradient(
+				to bottom,
+				var(--gradient-top) 0%,
+				var(--gradient-middle) 50%,
+				var(--gradient-bottom) 100%
+			);
+			color: #333;
+		}
+
+		/* ★ 画面共通カード（縦を短めに調整） */
+		.account-container {
+			background-color: var(--form-background);
+			padding: 40px;
+			/* ← 60px から詰めた */
+			border-radius: 12px;
+			box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+			text-align: center;
+			width: 100%;
+			max-width: 520px;
+			box-sizing: border-box;
+		}
+
+		/* タイトル */
+		.title-row {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 12px;
+			margin-bottom: 28px;
+			/* ← 36px から減らした */
+		}
+
+		h1 {
+			color: var(--primary-color);
+			font-size: 2.0em;
+			font-weight: 700;
+			border-bottom: 2px solid var(--secondary-color);
+			padding-bottom: 6px;
+			margin: 0;
+		}
+
+		.title-icon {
+			color: var(--primary-color);
+			font-size: 1.8em;
+		}
+
+		/* 更新・削除の2ボタンエリア */
+		.menu-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+			justify-items: center;
+			margin-bottom: 24px;
+			/* ← 30px より少し詰めた */
+		}
+
+		.menu-grid a {
+			text-decoration: none;
+		}
+
+		/* 青パネル（更新 / 削除） */
+		.panel-item {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			background-color: var(--primary-color);
+			color: #fff;
+			border-radius: 10px;
+			width: 140px;
+			height: 120px;
+			box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
+			transition: background-color 0.3s, transform 0.2s;
+		}
+
+		.panel-item:hover {
+			background-color: #005a8a;
+			transform: translateY(-4px);
+		}
+
+		.panel-icon {
+			font-size: 2.2em;
+			margin-bottom: 10px;
+		}
+
+		.label {
+			font-weight: bold;
+			font-size: 1em;
+			margin-top: 6px;
+		}
+
+		/* メニュー / ログアウト並び */
+		.actions-stack {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			/* ← 20px から少し詰め */
+			margin-top: 32px;
+			/* ← 40px から詰め */
+		}
+
+		/* 共通フル幅ボタン */
+		.fullwidth-btn {
+			width: 100%;
+			padding: 12px 0;
+			border: none;
+			border-radius: 8px;
+			font-size: 1.1em;
+			font-weight: bold;
+			color: #fff;
+			cursor: pointer;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+			transition: background-color 0.3s ease, transform 0.2s ease;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+		}
+
+		/* メニュー（グレー） */
+		.menu-main-button {
+			background-color: #6c757d;
+			box-shadow: 0 4px 10px rgba(108,117,125,0.3);
+		}
+
+		.menu-main-button:hover {
+			background-color: #5a6268;
+			transform: translateY(-3px);
+		}
+
+		/* ログアウト（赤） */
+		.logout-button {
+			background-color: #e63946;
+			box-shadow: 0 4px 10px rgba(230,57,70,0.3);
+		}
+
+		.logout-button:hover {
+			background-color: #c71f31;
+			transform: translateY(-3px);
+		}
+	</style>
+</head>
+
+<body>
+	<div class="account-container">
+
+		<!-- タイトル -->
+		<div class="title-row">
+			<h1>アカウント設定</h1>
+			<i class="fa-solid fa-user-gear title-icon" aria-hidden="true"></i>
+		</div>
+
+		<!-- 更新 / 削除 -->
+		<div class="menu-grid">
+			<a th:href="@{'/manageUserUpdate'(id=${session.loggedInUserId})}" class="panel-item">
+				<i class="fa-solid fa-user-pen panel-icon"></i>
+				<span class="label">更新</span>
+			</a>
+
+			<a th:href="@{/manageUserDeleteUser}" class="panel-item">
+				<i class="fa-solid fa-user-xmark panel-icon"></i>
+				<span class="label">削除</span>
+			</a>
+		</div>
+
+		<!-- メニュー / ログアウト -->
+		<div class="actions-stack">
+
+			<a th:href="@{/menu}" style="text-decoration: none;">
+				<button type="button" class="fullwidth-btn menu-main-button">
+					<span>↩ メインメニューに戻る</span>
+				</button>
+			</a>
+
+			<form action="logout" method="post" style="margin:0;">
+				<button type="submit" class="fullwidth-btn logout-button">
+					<i class="fa-solid fa-right-from-bracket"></i>
+					<span>ログアウト</span>
+				</button>
+			</form>
+
+		</div>
+
+	</div>
+</body>
+
+</html>

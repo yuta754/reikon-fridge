@@ -1,0 +1,443 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>冷蔵庫一覧 - 冷蔵アイテム</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    :root{
+      --primary-color: #0077b6; /* 濃い青 */
+      --background-dark: #e6f7ff; /* 淡い水色 */
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --muted:#64748b;
+      --accent:#38bdf8;
+      --radius:14px;
+      font-family: Inter, system-ui, -apple-system, "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", sans-serif;
+      /* グラデーションの色定義 */
+      --gradient-top: #cce7ff; 
+      --gradient-middle: #f9fcff;
+      --gradient-bottom: #ffffff;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:#0f172a;
+      padding:28px;
+      display:flex;
+      justify-content:center;
+      /* 縦グラデーション */
+      background: linear-gradient(to bottom, var(--gradient-top) 0%, var(--gradient-middle) 50%, var(--gradient-bottom) 100%);
+      min-height: 100vh;
+    }
+    .app{width: 1100px;margin: 0 auto;background-color: #FFFFFF;padding: 20px 20px 20px 10px;border: 1px solid #C8C8C8;border-radius: 8px;box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);}
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+    .brand{display:flex;align-items:center;gap:12px;}
+    .back-btn {background: #e2e8f0;border: none;border-radius: 8px;padding: 6px 12px;margin-right: 10px;font-size: 14px;color: #334155;cursor: pointer;transition: background 0.2s ease, transform 0.1s ease;}
+    .back-btn:hover {background: #cbd5e1;transform: translateY(-1px);}
+    .logo{width:46px;height:46px;border-radius:10px;background:var(--accent);display:grid;place-items:center;font-weight:700;font-size:18px;color:white;}
+    h1{font-size:22px;margin:0;}
+    .actions{display:flex;align-items:center;gap:10px;}
+    .search-box input[type="text"]{height: 40px;padding:6px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;}
+    .search-box button,.add-btn{border:none;border-radius:8px;padding:6px 12px;cursor:pointer;}
+    .search-box button{height:40px;background:#3b82f6;color:white;}
+    .add-btn{background:#3b82f6;color:white;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:20px;}
+    .card{width: 265px; background:var(--card);border-radius:var(--radius);padding:16px;border:1px solid #e2e8f0;box-shadow:0 2px 6px rgba(0,0,0,0.04);transition:transform .2s ease, box-shadow .2s ease;}
+    .card:hover{transform:translateY(-4px);box-shadow:0 6px 16px rgba(0,0,0,0.08);}
+    .card-top{display:flex;align-items:center;gap:12px;}
+    .avatar{width:54px;height:54px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#5eead4);display:grid;place-items:center;font-size:26px;}
+    .meta h3{margin:0;font-size:16px;}
+    .meta p{margin:0;color:var(--muted);font-size:13px;}
+    .progress{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:8px;}
+    .progress > i{display:block;height:100%;border-radius:999px;}
+    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+    .tag{font-size:12px;padding:5px 10px;border-radius:999px;background:#f1f5f9;color:var(--muted);}
+    .card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:14px;}
+    .qty{font-weight:600;color:#0f172a;}
+    .update-btn, .use-btn {border: none;border-radius: 8px;padding: 5px 12px;font-size: 13px;color: white;cursor: pointer;transition: background-color 0.2s ease, transform 0.1s ease;}
+    .update-btn {background-color: #10b981;}
+    .update-btn:hover {background-color: #059669;transform: translateY(-1px);}
+    .use-btn {background-color: #f59e0b;}
+    .use-btn:hover {background-color: #d97706;transform: translateY(-1px);}
+    .button-group {display: flex;gap: 8px;}
+    .genre-filter {display: flex;flex-wrap: wrap;justify-content: center;gap: 10px;margin: 16px 0 10px 0;}
+    .genre-btn {background: #fff;border: 1px solid #d1d5db;border-radius: 20px;padding: 6px 14px;font-size: 14px;cursor: pointer;color: #334155;box-shadow: 0 2px 4px rgba(0,0,0,0.05);transition: all 0.2s ease;}
+    .genre-btn:hover {background: #e0f2fe;border-color: #38bdf8;transform: translateY(-2px);}
+    .genre-btn.active {background: #38bdf8;color: white;border-color: #38bdf8;box-shadow: 0 3px 8px rgba(56,189,248,0.3);}
+
+	.logout-button{background-color:var(--background-dark);color:var(--primary-color);border: 1px solid var(--primary-color);padding:8px 15px;cursor:pointer;border-radius: 20px;transition:all 0.2s;font-size:0.9em;}
+	.logout-button:hover{background-color:var(--primary-color);color: white;box-shadow:0 4px 8px rgba(0, 0, 0, 0.1);}
+
+    /* 固定ゴミ箱 */
+    #trash-area {
+      position: fixed;
+      right: 30px;
+      bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 999;
+      user-select: none;
+    }
+    #trash {
+      width: 90px;
+      height: 100px;
+      position: relative;
+      cursor: grab;
+    }
+    .lid {
+      width: 90px;
+      height: 22px;
+      background: #94a3b8;
+      border-radius: 8px 8px 0 0;
+      position: absolute;
+      top: 0;
+      transition: transform 0.3s ease;
+      transform-origin: top center;
+    }
+    .bin {
+      width: 90px;
+      height: 78px;
+      background: #cbd5e1;
+      border-radius: 0 0 10px 10px;
+      position: absolute;
+      top: 22px;
+    }
+    #trash.open .lid {
+      transform: rotateX(60deg);
+    }
+    #trash-area p {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* モーダル */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      width: 300px;
+      text-align: center;
+    }
+    .modal-actions {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-around;
+    }
+    .confirm {
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 16px;
+      cursor: pointer;
+    }
+    .cancel {
+      background: #94a3b8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 16px;
+      cursor: pointer;
+    }
+
+    /* 追加ボタン */
+    .add-food-btn {
+      position: fixed;
+      bottom: 24px;
+      left: 30px;
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      color: white;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(59,130,246,0.3);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+      z-index: 1000;
+    }
+    .add-food-btn.show {opacity: 1;pointer-events: all;transform: translateY(0);}
+    .add-food-btn:hover {background: linear-gradient(135deg, #2563eb, #3b82f6);transform: translateY(-2px);}
+    .add-symbol {font-size: 22px;}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div class="brand">
+		<form action="/menu" method="get">
+           <button type="submit" class="back-btn">↩ 戻る</button>
+		</form>
+        <div class="logo">🍚</div>
+        <div><h1>冷蔵庫一覧</h1></div>
+      </div>
+      <div class="actions">
+        <form th:action="@{/selectFood}" method="get" class="search-box">
+          <input type="text" name="keyword" placeholder="食材名で検索" th:value="${keyword}">
+          <button type="submit">検索</button>
+        </form>
+      </div>
+      <div class="brand">
+		<form action="/logout" method="post">
+		  <button type="submit" class="logout-button">
+			<i class="fa-solid fa-right-from-bracket"></i> ログアウト
+		  </button>
+		</form>
+	  </div>
+    </header>
+     <div class="genre-filter">
+      <button class="genre-btn active" onclick="filterByGenre('all', this)">すべて</button>
+      <button class="genre-btn" onclick="filterByGenre('1', this)">乳製品 🥛</button>
+      <button class="genre-btn" onclick="filterByGenre('2', this)">卵 🥚</button>
+      <button class="genre-btn" onclick="filterByGenre('3', this)">果物 🍎</button>
+      <button class="genre-btn" onclick="filterByGenre('4', this)">肉類 🥩</button>
+      <button class="genre-btn" onclick="filterByGenre('5', this)">飲料 🧃</button>
+      <button class="genre-btn" onclick="filterByGenre('6', this)">野菜 🥬</button>
+      <button class="genre-btn" onclick="filterByGenre('7', this)">調味料 🧂</button>
+      <button class="genre-btn" onclick="filterByGenre('8', this)">その他   </button>
+     </div>
+
+    <section class="grid">
+      <article class="card" th:each="food : ${foods}" th:data-genre-id="${food.genreId}">
+        <div class="card-top">
+          <div class="avatar"><span class="icon"></span></div>
+          <div class="meta">
+            <h3 th:text="${food.foodName}">牛乳</h3>
+            <span th:if="${food.date != null}">
+            	<p th:text="'消費/賞味期限：' + ${food.date}"></p>
+            </span>
+			<span th:if="${food.date == null}">
+				<p th:text="'期限入力なし'"></p>
+			</span>
+<!--バーを非表示に-->
+<!--<div class="progress">-->
+<!--<i th:style="'width:' + ${food.remainingPercent} + '%;background:' + ${food.barColor}"></i>-->
+<!--</div>-->
+          </div>
+        </div>
+        <div class="tags"><span class="tag">冷蔵</span></div>
+        <div class="card-footer">
+		  <span th:if="${food.amount != null or food.bunshi != null or food.bunbo != null}">
+            <div class="qty">
+              <span th:if="${food.amount != null}" th:text="'残り ' + ${food.amount}"></span>
+              <span th:if="${food.amount != null and food.bunshi != null and food.bunbo != null}" th:text="'と ' + ${food.bunbo} + '分の' + ${food.bunshi}"></span>
+              <span th:if="${food.amount == null and food.bunshi != null and food.bunbo != null}" th:text="'残り ' + ${food.bunbo} + '分の' + ${food.bunshi}"></span>
+            </div>
+		  </span>
+          <span th:if="${food.amount == null and food.bunshi == null and food.bunbo == null}" style="font-weight:600;color:#0f172a;">
+			  食材量入力なし
+		  </span>
+          </div>
+        </span>
+        <span th:if="${food.amount == null and food.bunshi == null and food.bunbo == null}">
+		</span>
+          <div class="button-group">
+            <form th:action="@{/selectFoodUpdateFood}" method="get">
+              <input type="hidden" name="id" th:value="${food.foodId}" />
+              <button type="submit" class="update-btn">更新</button>
+            </form>
+            <form th:action="@{/selectFoodUseFood}" method="get">
+              <input type="hidden" name="id" th:value="${food.foodId}" />
+              <button type="submit" class="use-btn">使う</button>
+            </form>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- 固定ゴミ箱 -->
+    <div id="trash-area">
+      <div id="trash">
+        <div class="lid"></div>
+        <div class="bin"></div>
+      </div>
+      <p>ドラッグで廃棄</p>
+    </div>
+
+    <!-- モーダル -->
+    <div id="modal" class="modal">
+     <div class="modal-content">
+       <h2>操作選択</h2>
+       <p id="modal-text">この食材に対して操作を選んでください</p>
+       <div class="modal-actions">
+         <button class="confirm" id="delete-btn">削除</button>
+         <button class="confirm" id="discard-btn">廃棄</button>
+         <button class="cancel">キャンセル</button>
+      </div>
+     </div>
+    </div>
+
+    <!-- 食材追加ボタン -->
+    <div id="addFoodBtn" class="add-food-btn" onclick="goToAddPage()">
+      <span class="add-symbol">＋</span>
+      <span class="add-text">食材を追加</span>
+    </div>
+  </main>
+
+  <!-- JS -->
+  <script>
+    // 並べ替え
+    document.addEventListener("DOMContentLoaded", () => {
+      const cards = Array.from(document.querySelectorAll(".card"));
+      cards.sort((a, b) => {
+        const dateA = new Date(a.querySelector(".meta p").textContent.replace("賞味期限：", "").trim());
+        const dateB = new Date(b.querySelector(".meta p").textContent.replace("賞味期限：", "").trim());
+        return dateA - dateB;
+      });
+      const grid = document.querySelector(".grid");
+      grid.innerHTML = "";
+      cards.forEach(card => grid.appendChild(card));
+    });
+
+    // アイコン・単位
+    document.addEventListener("DOMContentLoaded", () => {
+      const genreMap = {
+        1: { unit: "g", icon: "🥛" },
+        2: { unit: "個", icon: "🥚" },
+        3: { unit: "個", icon: "🍎" },
+        4: { unit: "g",  icon: "🥩" },
+        5: { unit: "ml", icon: "🧃" },
+        6: { unit: "個（本）", icon: "🥬" },
+        7: { unit: "g",  icon: "🧂" },
+        8: { unit: "個", icon: "🥣" }
+      };
+
+      document.querySelectorAll(".card").forEach(card => {
+        const genreId = Number(card.dataset.genreId); 
+        const qtyDiv = card.querySelector(".qty");    
+        const iconSpan = card.querySelector(".icon");
+
+        if (genreMap[genreId] && qtyDiv) {
+          qtyDiv.textContent += " " + genreMap[genreId].unit;
+        }
+        if (genreMap[genreId] && iconSpan) {
+          iconSpan.textContent = genreMap[genreId].icon;
+        }
+      });
+    });
+
+    // ドラッグ削除
+    document.addEventListener("DOMContentLoaded", () => {
+  const trash = document.getElementById("trash");
+  const modal = document.getElementById("modal");
+  const cancelBtn = modal.querySelector(".cancel");
+  let draggedCard = null;
+
+  document.querySelectorAll(".card").forEach(card => {
+    card.setAttribute("draggable", "true");
+    card.addEventListener("dragstart", () => {
+      draggedCard = card;
+      trash.classList.add("open");
+    });
+    card.addEventListener("dragend", () => {
+      trash.classList.remove("open");
+    });
+  });
+
+  trash.addEventListener("dragover", e => { e.preventDefault(); trash.classList.add("open"); });
+  trash.addEventListener("dragleave", () => trash.classList.remove("open"));
+  trash.addEventListener("drop", e => {
+    e.preventDefault();
+    trash.classList.remove("open");
+    const foodName = draggedCard.querySelector("h3").textContent;
+    modal.dataset.foodId = draggedCard.querySelector("input[name='id']").value;
+    document.getElementById("modal-text").textContent = `${foodName}を廃棄しますか？ 削除しますか？`;
+    modal.style.display = "flex";
+  });
+
+  cancelBtn.addEventListener("click", () => modal.style.display = "none");
+
+  // 削除ボタン
+  document.getElementById("delete-btn").addEventListener("click", () => {
+    const id = modal.dataset.foodId;
+    fetch('/deleteFood', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({id: id})
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success){
+        draggedCard.remove(); // カード削除
+        modal.style.display = "none";
+      }
+    });
+  });
+
+  // 廃棄ボタン
+  document.getElementById("discard-btn").addEventListener("click", () => {
+    const id = modal.dataset.foodId;
+    fetch('/updateFoodFlag', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({id: id, flag: 3})
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success){
+        draggedCard.remove(); // 画面上から消す
+        modal.style.display = "none";
+      }
+    });
+  });
+});
+
+
+    // 追加ボタン表示
+    window.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        document.getElementById("addFoodBtn").classList.add("show");
+      }, 2500);
+    });
+
+    function goToAddPage() {
+      window.location.href = "/insertFoodSelectFood";
+    }
+  </script>
+  <script>
+  function filterByGenre(genre, btn) {
+    const cards = document.querySelectorAll(".card");
+    cards.forEach(card => {
+    const genreId = card.getAttribute("data-genre-id");
+    if (genre === "all" || genreId === genre) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+
+  document.querySelectorAll(".genre-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+}
+</script>
+<script>
+  function goBack() {
+    if (document.referrer) {
+      window.history.back(); 
+    } else {
+      window.location.href = "/menu"; //
+    }
+  }
+</script>
+</body>
+</html>

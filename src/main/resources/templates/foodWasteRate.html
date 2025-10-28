@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ジャンル別 食品廃棄率</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <style>
+        
+        
+        :root {
+            --primary-color: #0077b6; /* 濃い青 */
+            --secondary-color: #00b4d8; /* 水色 */
+            --danger-color: #e63946; /* 廃棄警告色 */
+            --background-dark: #e6f7ff; /* 淡い水色 */
+            --card-background: #ffffff;
+            --text-on-dark: #333; 
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            color: #333; 
+            margin: 0; 
+            padding: 20px;
+            background-color: var(--background-dark); 
+            min-height: 100vh;
+        }
+        
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background-color: var(--card-background); 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+        }
+        
+        
+        .header-container {
+            
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 15px; 
+            margin-bottom: 30px;
+        }
+        
+        /* タイトル */
+        .header-title { 
+            color: var(--primary-color);
+            margin: 0; 
+            font-size: 1.8em;
+            font-weight: 600;
+            text-align: center; 
+            flex-grow: 1; 
+        }
+        
+        /* メニューに戻るリンク */
+        .header-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 0;
+            white-space: nowrap;
+            font-size: 0.9em;
+            
+            padding-right: 15px; 
+            padding-left: 15px; 
+        }
+        .header-link:hover {
+            color: var(--secondary-color);
+        }
+
+        .logout-button {
+            
+            background-color: var(--background-dark); 
+            color: var(--primary-color); 
+            border: 1px solid var(--primary-color);
+            padding: 8px 15px;
+            cursor: pointer; 
+            border-radius: 20px; 
+            transition: all 0.2s;
+            font-size: 0.9em;
+            white-space: nowrap; 
+        }
+        .logout-button:hover {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* === コントロール（選択ボックス） === */
+        .controls { 
+            margin-bottom: 25px;
+            display: flex; 
+            justify-content: space-around; 
+            flex-wrap: wrap; 
+            gap: 15px;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+        .controls label { font-weight: 600; color: #555; }
+        .controls select { 
+            padding: 8px;
+            border-radius: 6px; 
+            border: 1px solid var(--secondary-color); 
+            background-color: #fff;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            min-width: 150px;
+        }
+        
+        
+        .chart-container { 
+            text-align: center; 
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fcfcfc;
+            margin-bottom: 30px;
+        }
+        #wastePieChart { 
+            max-width: 525px; 
+            max-height: 525px; 
+            width: 100%; 
+            height: 100%;
+            margin: 0 auto; 
+        }
+        .chart-container h2 {
+            color: var(--primary-color);
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            text-align: center;
+        }
+        #colorLegend { 
+            border: 1px solid var(--secondary-color);
+            padding: 15px; 
+            border-radius: 8px; 
+            background-color: #e6f7ff;
+            font-size: 0.9em; 
+            text-align: left; 
+            display: inline-block;
+            margin-top: 20px;
+        }
+        
+        /* === テーブルスタイル（共通） === */
+        h2 { 
+            color: var(--primary-color);
+            font-size: 1.4em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 15px; 
+            border-radius: 8px;
+            overflow: hidden; 
+        }
+        th, td { 
+            border: none;
+            padding: 10px 15px;
+            text-align: left; 
+            border-bottom: 1px solid #eee;
+        }
+        th { 
+            background-color: var(--primary-color); 
+            color: white; 
+            font-weight: 600; 
+            text-transform: uppercase;
+        }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover td { background-color: #e0f7fa; }
+        
+        /* === 詳細テーブルの色 === */
+        .detail-table th { 
+            background-color: var(--danger-color) !important;
+            color: white !important; 
+        }
+
+        /* === 戻るリンク  === */
+        .back-link { 
+            display: none; 
+        }
+        
+        /* === トレンドパネルのスタイル === */
+        .trend-panel {
+            display: flex; 
+            justify-content: center; 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px;
+            background-color: #ffffff;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="header-container">
+            <a href="/menu" class="header-link">↩ メニュー画面に戻る</a>
+            
+            <h1 class="header-title">ジャンル別 食品廃棄率</h1>
+            
+            <form method="post" action="/logout">
+                <button type="submit" class="logout-button" title="ログアウト">
+                    <i class="fa-solid fa-right-from-bracket"></i> ログアウト
+                </button>
+            </form>
+        </div>
+        <div class="chart-container">
+            <h2>廃棄率 円グラフ</h2>
+
+            <div class="trend-panel">
+                
+                <div style="text-align: center;">
+                    <p style="font-weight: bold; margin: 0; color: #555;">廃棄率比較 (<span th:text="${currentPeriod}">全期間</span>)</p>
+                    <span th:if="${trendStatus == 'down'}" style="color: green; font-size: 1.5em;"><i class="fa-solid fa-arrow-down"></i> 削減傾向</span>
+                    <span th:if="${trendStatus == 'up'}" style="color: var(--danger-color); font-size: 1.5em;"><i class="fa-solid fa-arrow-up"></i> 増加傾向</span>
+                    <span th:if="${trendStatus == 'stable'}" style="color: var(--primary-color); font-size: 1.5em;"><i class="fa-solid fa-circle-minus"></i> 安定</span>
+                </div>
+            </div>
+            
+            <div style="text-align: center; font-size: 0.85em; color: #666; margin-top: 5px; margin-bottom: 20px;">
+                <p style="margin: 0;">
+                    ※ **廃棄率比較**: 現期間の廃棄総量を直前期間と比較し、±5%以上の増減で傾向を表示します。
+                </p>
+            </div>
+            
+            <div class="controls">
+                <div>
+                    <label for="periodSelector">期間を選択:</label>
+                    <select id="periodSelector" onchange="applyPeriodFilter(this.value)">
+                        <option value="all" th:selected="${currentPeriod == 'all'}">全て</option>
+                        <option value="week" th:selected="${currentPeriod == 'week'}">今週</option>
+                        <option value="month" th:selected="${currentPeriod == 'month'}">今月</option>
+                        <option value="year" th:selected="${currentPeriod == 'year'}">今年</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="genreSelector">表示ジャンルを選択:</label>
+                    <select id="genreSelector">
+                        <option value="all">全てのジャンル</option>
+                        <option th:each="rate : ${wasteRates}" th:value="${rate.genreName}" th:text="${rate.genreName}"></option>
+                    </select>
+                </div>
+            </div>
+            
+            <canvas id="wastePieChart"></canvas>
+            <p id="selectedGenreRate" style="font-size: 1.2em; font-weight: bold; margin-top: 15px; color: var(--primary-color);"></p>
+            
+            <div id="colorLegend" style="margin-top: 20px; font-size: 0.9em; text-align: left; display: inline-block;">
+                <p style="font-weight: bold; margin-bottom: 5px;">【廃棄率レベル (全ジャンル表示時)】</p>
+                <div id="legendItems">
+                    </div>
+            </div>
+        </div>
+        
+        <h2>全ジャンル 廃棄率一覧</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>食品ジャンル</th>
+                    <th>廃棄率 (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="rate : ${wasteRates}">
+                    <td th:text="${rate.genreName}">ジャンル名</td>
+                    <td th:text="${#numbers.formatDecimal(rate.wasteRate, 1, 2)} + ' %'">0.00 %</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div id="detailTableContainer">
+            <h2><span id="detailHeader"></span>廃棄詳細</h2>
+            <table id="wasteDetailTable" class="detail-table">
+                <thead>
+                    <tr>
+                        <th style="background-color: var(--danger-color);">食品名</th>
+                        <th style="background-color: var(--danger-color);">廃棄量</th>
+                        <th style="background-color: var(--danger-color);">ジャンル</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+        
+        </div>
+    
+    <script>
+        function applyPeriodFilter(period) {
+            window.location.href = '/waste-rate?period=' + period;
+        }
+    </script>
+    
+    <script th:inline="javascript">
+        const allWasteRates = [[${wasteRates}]]; 
+        const allWasteDetails = [[${wasteDetails}]];
+        
+        const genreSelector = document.getElementById('genreSelector');
+        const rateDisplay = document.getElementById('selectedGenreRate');
+        const ctx = document.getElementById('wastePieChart').getContext('2d');
+        const detailHeader = document.getElementById('detailHeader');
+        const detailBody = document.querySelector('#wasteDetailTable tbody');
+        const legendContainer = document.getElementById('legendItems');
+        let wasteChart; 
+        
+        // 色定義 
+        const COLOR_HIGH = '#FF6384';   // 赤 (40%超)
+        const COLOR_MEDIUM = '#36A2EB'; // 青 (20%超〜40%)
+        const COLOR_LOW = '#B3B3B3';    // 灰色 (20%以下)
+        const COLOR_ZERO = '#E0E0E0';   // 0%は薄い灰色
+        
+        const legendData = [
+            { label: '(40% 超)', color: COLOR_HIGH },
+            { label: '(20% 〜 40% 以下)', color: COLOR_MEDIUM },
+            { label: '(20% 以下)', color: COLOR_LOW }
+        ];
+
+        
+        Chart.register(ChartDataLabels);
+
+        function drawLegend(isAllGenre) {
+            legendContainer.innerHTML = '';
+            
+            if (isAllGenre) {
+                legendData.forEach(item => {
+                    const p = document.createElement('p');
+                    p.style.margin = '3px 0';
+                    p.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; background-color: ${item.color}; border-radius: 3px; margin-right: 5px;"></span>${item.label}`;
+                    legendContainer.appendChild(p);
+                });
+                document.getElementById('colorLegend').style.display = 'inline-block';
+            } else {
+                document.getElementById('colorLegend').style.display = 'none';
+            }
+        }
+
+        function updateChart(selectedGenre) {
+            let labels, data, totalRate, titleText;
+            
+            if (selectedGenre === 'all') {
+                labels = allWasteRates.map(item => item.genreName);
+                data = allWasteRates.map(item => parseFloat(item.wasteRate.toFixed(2)));
+                titleText = '食品ジャンル別 廃棄率 (%)';
+                totalRate = '全ジャンルの内訳';
+
+                const backgroundColors = data.map(rate => {
+                    if (rate > 40) {
+                        return COLOR_HIGH;
+                    } else if (rate > 20) {
+                        return COLOR_MEDIUM;
+                    } else if (rate > 0) {
+                        return COLOR_LOW;
+                    } else {
+                        return COLOR_ZERO;
+                    }
+                });
+                var finalBackgroundColors = backgroundColors;
+
+                drawLegend(true);
+            } else {
+                const selectedItem = allWasteRates.find(item => item.genreName === selectedGenre);
+                const rate = parseFloat(selectedItem.wasteRate.toFixed(2));
+                
+                labels = ['廃棄率 (%)', '非廃棄率 (%)'];
+                data = [rate, 100.00 - rate];
+                titleText = selectedGenre + ' の廃棄状況';
+                totalRate = selectedGenre + ' の廃棄率: ' + rate.toFixed(2) + ' %';
+                
+                var finalBackgroundColors = [COLOR_HIGH, '#4BC0C0'];
+                
+                drawLegend(false);
+            }
+
+            if (wasteChart) {
+                wasteChart.destroy();
+            }
+
+            wasteChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '割合 (%)',
+                        data: data,
+                        backgroundColor: finalBackgroundColors,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true, 
+                            position: 'right',
+                        },
+                        title: {
+                            display: true,
+                            text: titleText
+                        },
+                        datalabels: {
+                            color: '#333',
+                            formatter: (value, context) => {
+                                if (value === 0) return '';
+                                
+                                const label = context.chart.data.labels[context.dataIndex];
+                                return `${label}\n${value.toFixed(1)}%`;
+                            },
+                            font: {
+                                weight: 'bold',
+                                size: 14,
+                            },
+                            padding: 6
+                        }
+                    }
+                }
+            });
+
+            rateDisplay.textContent = totalRate;
+            updateDetailTable(selectedGenre);
+        }
+
+        function updateDetailTable(selectedGenre) {
+            detailBody.innerHTML = ''; 
+            
+            const filteredDetails = selectedGenre === 'all'
+                ? allWasteDetails
+                : allWasteDetails.filter(detail => detail.genreName === selectedGenre);
+
+            detailHeader.textContent = selectedGenre === 'all' 
+                ? '全ジャンルの' 
+                : selectedGenre + ' の';
+
+            if (filteredDetails.length === 0) {
+                const row = detailBody.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 3;
+                cell.textContent = '廃棄された食品はありません。';
+                return;
+            }
+
+            filteredDetails.forEach(detail => {
+                const row = detailBody.insertRow();
+                row.insertCell().textContent = detail.foodName;
+                row.insertCell().textContent = detail.wasteAmount.toFixed(2); 
+                
+                const genreCell = row.insertCell();
+                genreCell.textContent = detail.genreName;
+            });
+            
+            // 'all' 選択時にのみジャンル列を表示/非表示を切り替える
+            const headerRow = document.querySelector('#wasteDetailTable thead tr');
+            const genreHeader = headerRow.cells[2];
+            const genreCells = document.querySelectorAll('#wasteDetailTable tbody tr > td:nth-child(3)');
+
+            if (selectedGenre === 'all') {
+                genreHeader.style.display = '';
+                genreCells.forEach(cell => cell.style.display = '');
+            } else {
+                genreHeader.style.display = 'none';
+                genreCells.forEach(cell => cell.style.display = 'none');
+            }
+        }
+
+       
+        genreSelector.addEventListener('change', (event) => {
+            updateChart(event.target.value);
+        });
+
+        
+        
+        updateChart('all');
+    </script>
+</body>
+</html>

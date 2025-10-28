@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        
+        :root {
+            --primary-color: #0077b6; /* 濃い青 */
+            --secondary-color: #00b4d8; /* 水色 */
+            --accent-color: #e63946; /* 強調色（エラーなどに） */
+            /* グラデーションの色定義 */
+            --gradient-top: #cce7ff; 
+            --gradient-middle: #f9fcff;
+            --gradient-bottom: #ffffff;
+            --form-background: #ffffff;
+            --input-border: #cccccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* 縦グラデーション */
+            background: linear-gradient(to bottom, var(--gradient-top) 0%, var(--gradient-middle) 50%, var(--gradient-bottom) 100%);
+            color: #333;
+            overflow: hidden; 
+            position: relative;
+        }
+
+        /* ⭐ 修正: .background-title は削除されました ⭐ */
+
+        .login-container {
+            background-color: var(--form-background);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            position: relative; 
+            z-index: 1; 
+        }
+
+        .login-container h1 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 700;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            width: calc(100% - 20px);
+            padding: 12px 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 8px rgba(0, 180, 216, 0.3);
+            outline: none;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 119, 182, 0.3);
+            margin-top: 20px;
+        }
+
+        .login-button:hover {
+            background-color: #005a8a;
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: var(--accent-color);
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .register-link {
+            display: block;
+            margin-top: 25px;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+
+        .register-link:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="login-container">
+        <h1>ログイン</h1>
+        
+        <div th:if="${loginError}" class="error-message">
+            <p th:text="${loginError}">認証に失敗しました。</p>
+        </div>
+
+        <form method="post" action="/login">
+            <div class="form-group">
+                <label for="userMail"><i class="fa-solid fa-envelope"></i> メールアドレス:</label>
+                <input type="email" id="userMail" name="userMail" required>
+            </div>
+            <div class="form-group">
+                <label for="userPassword"><i class="fa-solid fa-lock"></i> パスワード:</label>
+                <input type="password" id="userPassword" name="userPassword" minlength="3" maxlength="10" required>
+                <small style="color: #666;">（3〜10文字）</small>
+            </div>
+            <button type="submit" class="login-button">ログイン</button>
+        </form>
+        
+        <p style="margin-top: 20px;">
+			<a href="/loginInsertUser" class="register-link">新規ユーザー登録はこちら</a>
+		</p>
+    </div>
+</body>
+</html>

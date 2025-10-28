@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>🏠 メニュー画面</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+	<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+	<style>
+		:root {
+			/* グラデーションの色定義 */
+			--gradient-top: #cce7ff;
+			--gradient-middle: #f9fcff;
+			--gradient-bottom: #ffffff;
+		}
+
+		body {
+			font-family: 'Arial', sans-serif;
+			min-height: 100vh;
+			margin: 0;
+			padding: 20px;
+			text-align: center;
+			/* 縦グラデーション */
+			background: linear-gradient(to bottom, var(--gradient-top) 0%, var(--gradient-middle) 50%, var(--gradient-bottom) 100%);
+		}
+
+		.room {
+			width: 1100px;
+			margin: 0 auto;
+			background-color: #FFFFFF;
+			padding: 30px;
+			border: 1px solid #C8C8C8;
+			border-radius: 8px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+		}
+
+		.header-controls {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+		}
+
+		.logout-button {
+			background-color: #E0E0E0;
+			color: #4A4A4A;
+			border: none;
+			padding: 8px 15px;
+			cursor: pointer;
+			border-radius: 5px;
+			transition: background-color 0.2s;
+			font-size: 0.9em;
+		}
+
+		.logout-button:hover {
+			background-color: #CCCCCC;
+		}
+
+		h1 {
+			font-family: "Noto Serif JP";
+			font-weight: bold;
+			color: royalblue;
+			font-size: 2.5em;
+			margin-top: 10px;
+			margin-bottom: 50px;
+			text-align: center;
+		}
+
+		.main-table {
+			width: 100%;
+			text-align: left;
+		}
+
+		.main-table td {
+			vertical-align: top;
+			padding: 10px;
+		}
+
+		.refrigerator-button {
+			cursor: pointer;
+			background: linear-gradient(145deg, #F5F5F5, #E0E0E0);
+			border: 1px solid #C8C8C8;
+			padding: 0;
+			width: 100%;
+			height: 350px;
+			border-radius: 15px;
+			box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.15);
+			transition: transform 0.2s, box-shadow 0.2s;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.refrigerator-button:hover {
+			transform: translateY(-5px);
+			box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.2);
+		}
+
+		.refrigerator-icon {
+			font-size: 150px;
+			color: #28A745;
+			margin-bottom: 20px;
+		}
+
+		.refrigerator-label {
+			font-weight: bold;
+			font-size: 1.5em;
+			color: #333;
+		}
+
+		.controller-panel {
+			background-color: #343A40;
+			color: #fff;
+			padding: 20px;
+			border-radius: 10px;
+			display: inline-block;
+			width: 90%;
+			min-width: 250px;
+		}
+
+		.controller-panel h2 {
+			font-size: 1.2em;
+			margin-bottom: 15px;
+			border-bottom: 1px solid #495057;
+			padding-bottom: 8px;
+		}
+
+		.panel-item {
+			width: 100%;
+			height: 80px;
+			border: none;
+			padding: 10px;
+			cursor: pointer;
+			border-radius: 8px;
+			transition: background-color 0.2s;
+			margin-top: 10px;
+			font-size: 1em;
+		}
+
+		.panel-item .label {
+			display: block;
+			font-size: 0.8em;
+			margin-top: 5px;
+			font-weight: bold;
+		}
+
+		.panel-icon {
+			font-size: 24px;
+		}
+
+		.waste-rate-button {
+			background-color: #FFC107;
+			color: #333;
+		}
+
+		.waste-rate-button:hover {
+			background-color: #E0A800;
+		}
+
+		.shopping-list-button {
+			background-color: #17A2B8;
+			color: #fff;
+		}
+
+		.shopping-list-button:hover {
+			background-color: #138496;
+		}
+
+		.user-manage-button {
+			background-color: #6C757D;
+			color: #fff;
+		}
+
+		.user-manage-button:hover {
+			background-color: #5A6268;
+		}
+
+		.ai-chat-button {
+			background-color: #9C27B0;
+			color: #fff;
+		}
+
+		.ai-chat-button:hover {
+			background-color: #7B1FA2;
+		}
+
+		.event-section {
+			margin-top: 40px;
+			background: linear-gradient(135deg, #ffe4a1, #ffb347);
+			padding: 20px;
+			border-radius: 12px;
+			color: #4a3b00;
+			box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+			cursor: pointer;
+		}
+
+		.calendar-section {
+			margin-top: 40px;
+			background: #fff;
+			padding: 20px;
+			border-radius: 12px;
+			box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+		}
+
+		.calendar-section h3 {
+			margin-bottom: 20px;
+			color: #333;
+		}
+
+		#calendar {
+			max-width: 100%;
+			margin: 0 auto;
+		}
+
+		.news-section {
+			margin-top: 40px;
+			text-align: left;
+		}
+
+		.news-title {
+			font-size: 1.2em;
+			font-weight: bold;
+			color: #333;
+			margin-bottom: 15px;
+		}
+
+		.news-card {
+			background: #fff;
+			border-left: 5px solid #007BFF;
+			padding: 10px 15px;
+			border-radius: 8px;
+			box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.1);
+			margin-bottom: 10px;
+		}
+
+		.news-card strong {
+			color: #007BFF;
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1000;
+			padding-top: 50px;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+
+		.modal-content {
+			background-color: #fff9f0;
+			margin: auto;
+			padding: 20px;
+			border: 2px solid #ffb347;
+			width: 80%;
+			max-width: 400px;
+			border-radius: 12px;
+			text-align: center;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			animation: fadeIn 0.3s ease-in-out;
+		}
+
+		.chat-modal-content {
+			background-color: #ffffff;
+			margin: auto;
+			padding: 0;
+			border: none;
+			width: 90%;
+			max-width: 600px;
+			height: 80vh;
+			border-radius: 15px;
+			box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+			display: flex;
+			flex-direction: column;
+			animation: fadeIn 0.3s ease-in-out;
+		}
+
+		.chat-header {
+			background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+			color: white;
+			padding: 20px;
+			border-radius: 15px 15px 0 0;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.chat-header h2 {
+			margin: 0;
+			font-size: 1.5em;
+		}
+
+		.close-btn {
+			color: white;
+			font-size: 28px;
+			font-weight: bold;
+			cursor: pointer;
+			background: none;
+			border: none;
+		}
+
+		.close-btn:hover {
+			color: #ffccff;
+		}
+
+		.chat-messages {
+			flex: 1;
+			overflow-y: auto;
+			padding: 20px;
+			background-color: #f5f5f5;
+		}
+
+		.message {
+			margin-bottom: 15px;
+			display: flex;
+			width: 100%;
+		}
+
+		.message.ai {
+			justify-content: flex-start;
+		}
+
+		.message.user {
+			justify-content: flex-end;
+		}
+
+		.message-bubble {
+			max-width: 70%;
+			padding: 12px 16px;
+			border-radius: 18px;
+			word-wrap: break-word;
+			white-space: pre-wrap;
+		}
+
+
+		.message.ai .message-bubble {
+			background-color: #f0f0f0;
+			color: #333;
+			border: 1px solid #ddd;
+			border-bottom-left-radius: 4px;
+			text-align: left;
+		}
+
+
+		.message.user .message-bubble {
+			background-color: #9C27B0;
+			color: white;
+			border-bottom-right-radius: 4px;
+			text-align: left;
+
+		}
+
+
+		.chat-input-container {
+			padding: 15px;
+			background-color: white;
+			border-top: 1px solid #ddd;
+			border-radius: 0 0 15px 15px;
+			display: flex;
+			gap: 10px;
+		}
+
+		.chat-input {
+			flex: 1;
+			padding: 12px;
+			border: 1px solid #ddd;
+			border-radius: 25px;
+			font-size: 14px;
+			outline: none;
+		}
+
+		.chat-input:focus {
+			border-color: #9C27B0;
+		}
+
+		.send-btn {
+			background-color: #9C27B0;
+			color: white;
+			border: none;
+			padding: 12px 24px;
+			border-radius: 25px;
+			cursor: pointer;
+			font-weight: bold;
+			transition: background-color 0.2s;
+		}
+
+		.send-btn:hover {
+			background-color: #7B1FA2;
+		}
+
+		.send-btn:disabled {
+			background-color: #ccc;
+			cursor: not-allowed;
+		}
+
+		.typing-indicator {
+			display: none;
+			padding: 10px;
+			color: #666;
+			font-style: italic;
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(-20px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes slideIn {
+			from {
+				opacity: 0;
+				transform: translateX(-10px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateX(0);
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="room">
+		<div class="header-controls">
+			<div style="flex-grow: 1;"></div>
+			<form method="post" action="/logout">
+				<button type="submit" class="logout-button" title="ログアウト">
+					<i class="fa-solid fa-right-from-bracket"></i> ログアウト
+				</button>
+			</form>
+		</div>
+
+		<h1 style="
+          font-family: 'Cinzel', serif;
+          font-size: 42px;
+          color: #1a1a1a;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          border-bottom: 2px solid #c5a572;
+          display: inline-block;
+          padding-bottom: 6px;
+          ">
+			Rei Concierge
+		</h1>
+
+		<table class="main-table">
+			<tr>
+				<td style="width: 65%; text-align: center;">
+					<form method="get" action="/selectFood">
+						<button type="submit" class="refrigerator-button" title="食材の選択・登録">
+							<div class="visual">
+								<i class="fa-solid fa-refrigerator refrigerator-icon"></i>
+							</div>
+							<span class="refrigerator-label">冷蔵庫</span>
+						</button>
+					</form>
+				</td>
+				<td style="width: 35%; text-align: center;">
+					<div class="controller-panel">
+						<h2>Management Panel</h2>
+						<table border="0" style="width: 100%; text-align: center;">
+							<tr>
+								<td style="padding: 5px;">
+									<form method="get" action="/waste-rate">
+										<button type="submit" class="panel-item waste-rate-button" title="食品ロス率の確認">
+											<i class="fa-solid fa-chart-pie panel-icon"></i>
+											<span class="label">ロス率</span>
+										</button>
+									</form>
+								</td>
+								<td style="padding: 5px;">
+									<form method="post" action="/shoppingList">
+										<button type="submit" class="panel-item shopping-list-button" title="買い物リストの管理">
+											<i class="fa-solid fa-bag-shopping panel-icon"></i>
+											<span class="label">リスト</span>
+										</button>
+									</form>
+								</td>
+							</tr>
+							<tr>
+								<td style="padding: 5px;">
+									<button type="button" class="panel-item ai-chat-button" id="openAiChat"
+										title="AIレシピ検索">
+										<i class="fa-solid fa-robot panel-icon"></i>
+										<span class="label">レシピAI</span>
+									</button>
+								</td>
+								<td style="padding: 5px;">
+									<form method="post" action="/menuManageUser">
+										<button type="submit" class="panel-item user-manage-button" title="ユーザー設定・管理">
+											<i class="fa-solid fa-user-gear panel-icon"></i>
+											<span class="label">設定</span>
+										</button>
+									</form>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+
+
+		<div class="event-section" id="halloweenEvent">
+			<h3>🎃 ハロウィン限定レシピ公開中!</h3>
+			<p>かぼちゃを使ったスイーツやスープを楽しもう!</p>
+		</div>
+
+		<div class="calendar-section">
+			<h3>📅 賞味期限カレンダー</h3>
+			<div id="calendar"></div>
+		</div>
+
+		<div class="news-section">
+			<div class="news-title">お知らせ</div>
+			<div class="news-card"><strong>2025/10/22</strong>　レシピアシスタントAIが使えるようになりました！</div>
+			<div class="news-card"><strong>2025/10/22</strong>　🎃ハロウィン限定レシピを公開しました!</div>
+			<div class="news-card"><strong>2025/10/21</strong>　メンテナンスのお知らせ（10/22 0:00〜4:00）</div>
+			<div class="news-card"><strong>2025/10/20</strong>　新デザインをリリースしました!</div>
+		</div>
+	</div>
+
+	<!-- ハロウィンレシピモーダル -->
+	<div id="recipeModal" class="modal">
+		<div class="modal-content">
+			<span class="close-btn" data-modal="recipeModal">&times;</span>
+			<h2>🎃 ハロウィン限定レシピ</h2>
+			<p><strong>かぼちゃのクリーミースープ</strong></p>
+			<ul style="text-align:left; margin:0 auto; display:inline-block;">
+				<li>かぼちゃ … 200g</li>
+				<li>牛乳 … 150ml</li>
+				<li>バター … 大さじ1</li>
+				<li>塩 … 少々</li>
+			</ul>
+			<p style="margin-top:10px;">🫕 かぼちゃを柔らかく煮て、ミキサーでペースト状にし、牛乳とバターを加えて温めたら完成！</p>
+		</div>
+	</div>
+
+	<!-- AIチャットモーダル -->
+	<div id="aiChatModal" class="modal">
+		<div class="chat-modal-content">
+			<div class="chat-header">
+				<h2><i class="fa-solid fa-robot"></i> レシピアシスタントAI</h2>
+				<button class="close-btn" data-modal="aiChatModal">&times;</button>
+			</div>
+			<div class="chat-messages" id="chatMessages">
+				<div class="message ai">
+					<div class="message-bubble">
+						<p>何かお手伝いできることはありますか？<br>(※返信に時間がかかる場合がございます)</p>
+					</div>
+				</div>
+			</div>
+			<div class="typing-indicator" id="typingIndicator">AIが考え中...</div>
+			<div class="chat-input-container">
+				<input type="text" id="chatInput" class="chat-input" placeholder="メッセージを入力..." />
+				<button id="sendBtn" class="send-btn">送信</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+	<script>
+		// カレンダー初期化
+		document.addEventListener('DOMContentLoaded', function () {
+			var calendarEl = document.getElementById('calendar');
+			var calendar = new FullCalendar.Calendar(calendarEl, {
+				initialView: 'dayGridMonth',
+				locale: 'ja',
+				height: 'auto',
+				headerToolbar: {
+					left: 'prev,next today',
+					center: 'title',
+					right: 'dayGridMonth,dayGridWeek'
+				},
+				buttonText: {
+					today: '今日',
+					month: '月',
+					week: '週'
+					
+				},
+				events: function (info, successCallback, failureCallback) {
+					fetch('/menu/events')
+						.then(response => response.json())
+						.then(data => {
+							console.log('取得したイベント:', data);
+							successCallback(data);
+						})
+						.catch(error => {
+							console.error('イベントの取得に失敗:', error);
+							failureCallback(error);
+						});
+				},
+				eventDidMount: function (info) {
+					info.el.title = info.event.title + '\n賞味期限: ' + info.event.startStr;
+				}
+			});
+			calendar.render();
+		});
+
+		// モーダル制御
+		document.addEventListener('DOMContentLoaded', () => {
+			// ハロウィンイベントクリック
+			document.getElementById('halloweenEvent').addEventListener('click', () => {
+				document.getElementById('recipeModal').style.display = 'block';
+			});
+
+			// AIチャットオープン
+			document.getElementById('openAiChat').addEventListener('click', () => {
+				document.getElementById('aiChatModal').style.display = 'block';
+			});
+
+			// モーダルを閉じる
+			document.querySelectorAll('.close-btn').forEach(btn => {
+				btn.addEventListener('click', (e) => {
+					const modalId = e.target.dataset.modal;
+					document.getElementById(modalId).style.display = 'none';
+				});
+			});
+
+			// 背景クリックで閉じる
+			window.addEventListener('click', (e) => {
+				if (e.target.classList.contains('modal')) {
+					e.target.style.display = 'none';
+				}
+			});
+		});
+
+		// AIチャット機能
+		const GEMINI_API_KEY = 'AIzaSyDKVQTeSmmFLtdng-PQvervQAAiity26QQ';
+		const chatMessages = document.getElementById('chatMessages');
+		const chatInput = document.getElementById('chatInput');
+		const sendBtn = document.getElementById('sendBtn');
+		const typingIndicator = document.getElementById('typingIndicator');
+		let conversationHistory = [];
+		async function sendMessage() {
+			const message = chatInput.value.trim();
+			if (!message) return;
+
+			// APIキーのチェック
+			if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
+				addMessage('⚠️ APIキーが設定されていません。HTMLファイルの GEMINI_API_KEY を設定してください。', 'ai');
+				return;
+			}
+
+			// ユーザーメッセージを表示
+			addMessage(message, 'user');
+			chatInput.value = '';
+			sendBtn.disabled = true;
+			typingIndicator.style.display = 'block';
+
+			// 会話履歴に追加
+			conversationHistory.push({
+				role: "user",
+				parts: [{text: message}]
+			});
+
+			try {
+				const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+				const response = await fetch(apiUrl, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						contents: conversationHistory,
+						systemInstruction: {
+							parts: [{
+								text: "あなたは親切な料理アシスタントです。レシピや料理に関する質問に日本語で詳しく答えてください。レシピを教える際は、材料と手順を分かりやすく説明してください。"
+							}]
+						},
+						generationConfig: {
+							temperature: 0.7,
+							maxOutputTokens: 2048,
+							topP: 0.95,
+							topK: 40
+						}
+					})
+				});
+
+				if (!response.ok) {
+					const errorData = await response.json();
+					console.error('API Error Response:', errorData);
+					throw new Error(`API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+				}
+
+				const data = await response.json();
+				console.log('API Response:', data);
+
+				if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+					const aiResponse = data.candidates[0].content.parts[0].text;
+					addMessage(aiResponse, 'ai');
+				} else {
+					throw new Error('予期しないレスポンス形式です');
+				}
+			} catch (error) {
+				console.error('Full Error:', error);
+				let errorMsg = '申し訳ございません。エラーが発生しました。';
+
+				if (error.message.includes('API Error: 400')) {
+					errorMsg = '⚠️ APIキーが無効です。正しいAPIキーを設定してください。';
+				} else if (error.message.includes('API Error: 403')) {
+					errorMsg = '⚠️ APIキーのアクセス権限がありません。Google Cloud ConsoleでAPIを有効化してください。';
+				} else if (error.message.includes('API Error: 429')) {
+					errorMsg = '⚠️ APIの利用制限に達しました。しばらく待ってから再試行してください。';
+				}
+
+				addMessage(errorMsg + '\n\n詳細: ' + error.message, 'ai');
+			} finally {
+				typingIndicator.style.display = 'none';
+				sendBtn.disabled = false;
+			}
+		}
+
+		function addMessage(text, sender) {
+			const messageDiv = document.createElement('div');
+			messageDiv.className = `message ${sender}`;
+			messageDiv.innerHTML = `<div class="message-bubble">${text}</div>`;
+			chatMessages.appendChild(messageDiv);
+			chatMessages.scrollTop = chatMessages.scrollHeight;
+		}
+
+		sendBtn.addEventListener('click', sendMessage);
+		chatInput.addEventListener('keypress', (e) => {
+			if (e.key === 'Enter') sendMessage();
+		});
+	</script>
+</body>
+
+</html>

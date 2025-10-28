@@ -1,0 +1,312 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>お買い物リスト - 冷蔵アイテム</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+	<style>
+		:root {
+			--bg: #f8fafc;
+			--card: #ffffff;
+			--muted: #64748b;
+			--accent: #38bdf8;
+			--radius: 14px;
+			font-family: Inter, system-ui, -apple-system, "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", sans-serif;
+      		/* グラデーションの色定義 */
+     		--gradient-top: #cce7ff; 
+      		--gradient-middle: #f9fcff;
+      		--gradient-bottom: #ffffff;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			background: var(--bg);
+			color: #0f172a;
+			padding: 28px;
+			display: flex;
+			justify-content: center;
+			min-height: 100vh;
+      		/* 縦グラデーション */
+      		background: linear-gradient(to bottom, var(--gradient-top) 0%, var(--gradient-middle) 50%, var(--gradient-bottom) 100%);
+		}
+
+		.app {
+			width: 1100px; 
+			margin: 0 auto; 
+			background-color: #FFFFFF; 
+			padding: 30px; 
+			border: 1px solid #C8C8C8; 
+			border-radius: 8px; 
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+		}
+
+		.header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 12px;
+		}
+
+		.brand {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.back-btn {
+			background: #e2e8f0;
+			border: none;
+			border-radius: 8px;
+			padding: 6px 12px;
+			margin-right: 10px;
+			font-size: 14px;
+			color: #334155;
+			cursor: pointer;
+			transition: background 0.2s ease, transform 0.1s ease;
+		}
+
+		.back-btn:hover {
+			background: #cbd5e1;
+			transform: translateY(-1px);
+		}
+
+		.logo {
+			width: 46px;
+			height: 46px;
+			border-radius: 10px;
+			background: var(--accent);
+			display: grid;
+			place-items: center;
+			font-weight: 700;
+			font-size: 18px;
+			color: white;
+		}
+
+		h1 {
+			font-size: 22px;
+			margin: 0;
+		}
+
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+			gap: 16px;
+			margin-top: 20px;
+		}
+
+		.card {
+			background: var(--card);
+			border-radius: var(--radius);
+			padding: 16px;
+			border: 1px solid #e2e8f0;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+			transition: transform .2s ease, box-shadow .2s ease;
+		}
+
+		.card:hover {
+			transform: translateY(-4px);
+			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+		}
+
+		.meta h3 {
+			margin: 0;
+			font-size: 16px;
+		}
+
+		.meta p {
+			margin: 4px 0;
+			color: var(--muted);
+			font-size: 13px;
+		}
+
+		.card-footer {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-top: 10px;
+		}
+
+		.buy-btn,
+		.delete-btn {
+			border: none;
+			border-radius: 8px;
+			padding: 6px 12px;
+			font-size: 13px;
+			color: white;
+			cursor: pointer;
+			transition: background-color .2s ease, transform .1s ease;
+		}
+
+		.buy-btn {
+			background-color: #3b82f6;
+		}
+
+		.buy-btn:hover {
+			background-color: #2563eb;
+			transform: translateY(-1px);
+		}
+
+		.delete-btn {
+			background-color: #ef4444;
+		}
+
+		.delete-btn:hover {
+			background-color: #dc2626;
+			transform: translateY(-1px);
+		}
+
+		.add-food-btn {
+			position: fixed;
+			bottom: 24px;
+			left: 30px;
+			background: linear-gradient(135deg, #22c55e, #4ade80);
+			color: white;
+			border-radius: 50px;
+			padding: 12px 20px;
+			font-size: 16px;
+			font-weight: 600;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			cursor: pointer;
+			box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
+			opacity: 0;
+			pointer-events: none;
+			transform: translateY(20px);
+			transition: all 0.6s ease;
+			z-index: 1000;
+		}
+
+		.add-food-btn.show {
+			opacity: 1;
+			pointer-events: all;
+			transform: translateY(0);
+		}
+
+		.add-food-btn:hover {
+			background: linear-gradient(135deg, #16a34a, #22c55e);
+			transform: translateY(-2px);
+		}
+	</style>
+</head>
+
+<body>
+	<main class="app">
+		<header class="header">
+			<div class="brand">
+				<button class="back-btn" onclick="goBack()">↩ 戻る</button>
+				<div class="logo">🛒</div>
+				<div>
+					<h1>お買い物リスト</h1>
+				</div>
+			</div>
+			<div class="brand">
+				<form action="/logout" method="post">
+					<button type="submit" class="back-btn">
+						<i class="fa-solid fa-right-from-bracket"></i> ログアウト
+					</button>
+				</form>
+			</div>
+		</header>
+
+		<section class="grid">
+			<article class="card" th:attr="data-genre-id=${food.genreId}" th:each="food : ${shoppingList}">
+				<div class="avatar"><span class="icon"></span></div>
+				<div class="meta">
+					<h3 th:text="${food.foodName}">牛乳</h3>
+					<span th:if="${food.date != null}">
+						<p th:text="'賞味期限：' + ${food.date}"></p>
+					</span>
+					<span th:if="${food.date == null}">
+						<p th:text="'期限入力なし'"></p>
+					</span>
+					<p th:text="'廃棄量：' + ${food.amount != null ? food.amount : 'なし'}"></p>
+				</div>
+				<div class="card-footer">
+					<button class="buy-btn" th:onclick="'markAsBought(' + ${food.foodId} + ')'">購入済み</button>
+					<button class="delete-btn" th:onclick="'deleteItem(' + ${food.foodId} + ')'">削除</button>
+				</div>
+			</article>
+		</section>
+
+		<div id="addFoodBtn" class="add-food-btn" onclick="goToFridge()">
+			<span class="add-symbol">＋</span>
+			<span class="add-text">冷蔵庫を見に行く</span>
+		</div>
+	</main>
+
+	<script>
+		window.addEventListener("DOMContentLoaded", () => {
+			setTimeout(() => {
+				document.getElementById("addFoodBtn").classList.add("show");
+			}, 2000);
+		});
+
+		function goToFridge() {
+			window.location.href = "/selectFood";
+		}
+
+		function goBack() {
+			if (document.referrer) {
+				window.history.back(); // 前のページに戻る
+			} else {
+				window.location.href = "/menu"; // 直接アクセス時はメニューへ
+			}
+		}
+
+		function markAsBought(id) {
+			const cardElement = document.querySelector(`button[onclick='markAsBought(${id})']`)?.closest(".card");
+			if (cardElement) {
+				cardElement.style.transition = "opacity 0.4s ease";
+				cardElement.style.opacity = "0";
+				setTimeout(() => cardElement.remove(), 400);
+			}
+
+			// 非表示リストに追加
+			let boughtItems = JSON.parse(localStorage.getItem("boughtItems")) || [];
+			boughtItems.push(id);
+			localStorage.setItem("boughtItems", JSON.stringify(boughtItems));
+
+			// 新規登録ページへ遷移
+			setTimeout(() => {
+				window.location.href = "/insertFoodSelectFood";
+			}, 600);
+		}
+
+		function deleteItem(id) {
+			const cardElement = document.querySelector(`button[onclick='deleteItem(${id})']`)?.closest(".card");
+			if (cardElement) {
+				cardElement.style.transition = "opacity 0.4s ease";
+				cardElement.style.opacity = "0";
+				setTimeout(() => cardElement.remove(), 400);
+			}
+
+			// 削除したIDを記録するところ
+			let hiddenItems = JSON.parse(localStorage.getItem("hiddenItems")) || [];
+			hiddenItems.push(id);
+			localStorage.setItem("hiddenItems", JSON.stringify(hiddenItems));
+		}
+
+		// ページ読み込み時に非表示リストを反映する
+		document.addEventListener("DOMContentLoaded", () => {
+			const hiddenItems = JSON.parse(localStorage.getItem("hiddenItems")) || [];
+			const boughtItems = JSON.parse(localStorage.getItem("boughtItems")) || [];
+			const allHidden = [...new Set([...hiddenItems, ...boughtItems])];
+
+			allHidden.forEach(id => {
+				const cardElement = document.querySelector(`button[onclick='deleteItem(${id})']`)?.closest(".card")
+					|| document.querySelector(`button[onclick='markAsBought(${id})']`)?.closest(".card");
+				if (cardElement) cardElement.remove();
+			});
+		});
+	</script>
+
+</body>
+
+</html>

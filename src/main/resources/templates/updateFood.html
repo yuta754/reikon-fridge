@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>食材登録</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Flatpickr -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    :root {
+      --primary-color: #0077b6;
+      --secondary-color: #00b4d8;
+      --accent-color: #e63946;
+      --gradient-top: #cce7ff;
+      --gradient-middle: #f9fcff;
+      --gradient-bottom: #ffffff;
+      --input-border: #cccccc;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, var(--gradient-top), var(--gradient-middle), var(--gradient-bottom));
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #333;
+    }
+	.title-row {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 12px;
+		margin-bottom: 25px;
+	}
+    .container {
+      background-color: #fff;
+      padding: 40px 35px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      width: 90%;
+      max-width: 550px;
+      position: relative;
+    }
+    h1 {
+		color: var(--primary-color);
+		margin: 0;
+		font-size: 2.0em;
+		font-weight: 700;
+		border-bottom: 2px solid var(--secondary-color);
+		padding-bottom: 6px;
+		display: inline-block;
+    }
+
+    label {
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      font-size: 1em;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+      margin-bottom: 15px;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 8px rgba(0, 180, 216, 0.3);
+      outline: none;
+    }
+
+    .header-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .logout-button {
+      background-color: #e2e8f0;
+      color: #334155;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .logout-button:hover {
+      background-color: #cbd5e1;
+    }
+
+    .fraction-btn {
+      background-color: #e2e8f0;
+      border: none;
+      color: #334155;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+      margin-bottom: 15px;
+      transition: background-color 0.2s;
+    }
+
+    .fraction-btn:hover {
+      background-color: #cbd5e1;
+    }
+
+    .button {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 10px rgba(0, 119, 182, 0.3);
+      margin-top: 10px;
+    }
+
+    .button:hover {
+      background-color: #005a8a;
+      transform: translateY(-2px);
+    }
+
+    .error-message {
+      color: var(--accent-color);
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    #fractionInput {
+      display: none;
+    }
+
+    /* モーダルボタン */
+    .btn-primary {
+      background-color: var(--primary-color);
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: #005a8a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="header-controls">
+      <form action="/selectFood" method="get">
+        <button type="submit" class="logout-button">↩ 戻る</button>
+      </form>
+    </div>
+	
+	<div class="title-row">
+	  <h1>食材情報更新</h1>
+	</div>
+
+    <form id="myForm" action="updateFood" method="post" th:object="${updateFoodForm}">
+      <div class="error-message" th:if="${message} != null">
+        <span th:text="${message}"></span>
+      </div>
+
+      <input type="hidden" th:field="*{foodId}">
+
+      <label>食材名</label>
+      <input type="text" th:field="*{foodName}" maxlength="100">
+
+      <label>食材ジャンル</label>
+      <select th:field="*{genreId}" id="genre" required>
+        <option th:each="genre:${food_genre}" th:text="${genre.genreName}" th:value="${genre.genreId}"></option>
+      </select>
+
+      <label>食材量</label>
+      <div>
+        <input type="number" min="1" th:field="*{amount}" style="width:100px; display:inline-block;">
+        <span id="unitLabel1">---</span>
+      </div>
+
+      <div id="fractionInput">
+        と <input type="number" th:field="*{bunbo}" min="2" style="width:60px;"> 分の
+        <input type="number" th:field="*{bunshi}" min="1" style="width:60px;">
+        <span id="unitLabel2">---</span>
+      </div>
+
+      <button type="button" class="fraction-btn" id="addFractionBtn">分数を追加</button>
+
+      <label>消費期限 / 賞味期限</label>
+      <input type="text" id="calendar" th:field="*{date}">
+
+      <button type="button" class="button" data-bs-toggle="modal" data-bs-target="#modal">登録</button>
+    </form>
+
+  </div>
+
+  <!-- モーダル -->
+  <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalLabel">確認</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">登録してもよろしいですか？</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+          <button type="button" class="btn btn-primary" id="confirmSubmit">登録する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script th:inline="javascript">
+  // ======= カレンダー =======
+  flatpickr("#calendar", { dateFormat: "Y-m-d", locale: "ja" });
+
+  // ======= 要素取得 =======
+  const addFractionBtn = document.getElementById('addFractionBtn');
+  const fractionInput = document.getElementById('fractionInput');
+  const genreSelect = document.getElementById("genre");
+  const unitLabel1 = document.getElementById("unitLabel1");
+  const unitLabel2 = document.getElementById("unitLabel2");
+
+  // ======= サーバーからのデータ =======
+  const unitMap = JSON.parse(/*[[${unitMapJson}]]*/ "null");
+  const hideFractionForGenres = ["1","2","4","5","7"];
+
+  // ======= 単位更新関数 =======
+  function updateUnit() {
+    const selectedId = genreSelect.value;
+    const unit = unitMap[selectedId] || "---";
+    unitLabel1.textContent = unit;
+    unitLabel2.textContent = unit;
+
+    if (hideFractionForGenres.includes(selectedId)) {
+      addFractionBtn.style.display = "none";
+      fractionInput.style.display = "none";
+      addFractionBtn.textContent = "分数を追加";
+    } else {
+      addFractionBtn.style.display = "inline-block";
+    }
+  }
+
+  // ======= 分数追加ボタン =======
+  addFractionBtn.addEventListener('click', () => {
+    const isVisible = fractionInput.style.display !== 'none';
+    fractionInput.style.display = isVisible ? 'none' : 'block';
+    addFractionBtn.textContent = isVisible ? '分数を追加' : '分数を削除';
+  });
+
+  // ======= 登録ボタン =======
+  document.getElementById("confirmSubmit").addEventListener("click", function () {
+    document.getElementById("myForm").submit();
+  });
+
+  // ======= ジャンル変更イベント =======
+  genreSelect.addEventListener("change", updateUnit);
+
+  // ======= 初期表示時にも実行 =======
+  updateUnit();
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

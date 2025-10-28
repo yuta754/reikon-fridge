@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+
+<head>
+	<meta charset="UTF-8">
+	<title>アカウント情報更新</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+	<style>
+		:root {
+			--primary-color: #0077b6;
+			--secondary-color: #00b4d8;
+			--gradient-top: #cce7ff;
+			--gradient-middle: #f9fcff;
+			--gradient-bottom: #ffffff;
+			--form-background: #ffffff;
+			--input-border: #cccccc;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+			background: linear-gradient(
+				to bottom,
+				var(--gradient-top) 0%,
+				var(--gradient-middle) 50%,
+				var(--gradient-bottom) 100%
+			);
+			color: #333;
+		}
+
+		/* ★ 共通カード：縦を短く */
+		.account-container {
+			background: var(--form-background);
+			padding: 40px;
+			border-radius: 12px;
+			box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+			width: 100%;
+			max-width: 520px;
+			box-sizing: border-box;
+			text-align: center;
+		}
+
+		/* タイトル */
+		.title-row {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 12px;
+			margin-bottom: 28px;
+		}
+
+		h1 {
+			color: var(--primary-color);
+			font-size: 2.0em;
+			font-weight: 700;
+			border-bottom: 2px solid var(--secondary-color);
+			padding-bottom: 6px;
+			margin: 0;
+		}
+
+		.title-icon {
+			color: var(--primary-color);
+			font-size: 1.8em;
+		}
+
+		/* 入力フォーム */
+		.form-group {
+			text-align: left;
+			margin-bottom: 18px;
+		}
+
+		.form-group label {
+			display: block;
+			margin-bottom: 8px;
+			color: #555;
+			font-weight: 600;
+			font-size: 0.95em;
+		}
+
+		.form-group input {
+			width: 100%;
+			padding: 12px 10px;
+			border: 1px solid var(--input-border);
+			border-radius: 8px;
+			font-size: 1em;
+			transition: border-color 0.3s, box-shadow 0.3s;
+			box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+		}
+
+		.form-group input:focus {
+			border-color: var(--secondary-color);
+			box-shadow: 0 0 8px rgba(0, 180, 216, 0.3);
+			outline: none;
+		}
+
+		/* ボタン */
+		.btn-primary {
+			background-color: var(--primary-color);
+			border: none;
+			border-radius: 8px;
+			font-weight: bold;
+			box-shadow: 0 4px 10px rgba(0, 119, 182, 0.3);
+			transition: background-color 0.3s ease, transform 0.2s ease;
+		}
+
+		.btn-primary:hover {
+			background-color: #005a8a;
+			transform: translateY(-2px);
+		}
+
+		.btn-secondary {
+			border: none;
+			border-radius: 8px;
+			font-weight: bold;
+			background-color: #6c757d;
+			color: #fff;
+			box-shadow: 0 4px 10px rgba(108,117,125,0.3);
+			transition: background-color 0.3s ease, transform 0.2s ease;
+		}
+
+		.btn-secondary:hover {
+			background-color: #5a6268;
+			transform: translateY(-2px);
+		}
+
+		.actions {
+			margin-top: 20px;
+			/* ← 24px から少し詰めた */
+		}
+
+		a {
+			text-decoration: none;
+			color: inherit;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="account-container">
+
+		<!-- タイトル -->
+		<div class="title-row">
+			<h1>アカウント更新</h1>
+			<i class="fa-solid fa-user-pen title-icon" title="ユーザ情報更新"></i>
+		</div>
+
+		<form th:action="@{/updateUser}" method="post">
+			<th:block th:if="${_csrf != null}">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+			</th:block>
+
+				<input id="userId" type="hidden" name="userId" th:value="${userId}" readonly>
+
+			<div class="form-group">
+				<label for="userName">ユーザ名：</label>
+				<input id="userName" type="text" name="userName" th:value="${userName}">
+			</div>
+
+			<div class="form-group">
+				<label for="userMail">メールアドレス：</label>
+				<input id="userMail" type="email" name="userMail" th:value="${userMail}">
+			</div>
+
+			<div class="form-group">
+				<label for="userPass">パスワード：</label>
+				<input id="userPass" type="password" name="userPass" th:value="${userPass}">
+			</div>
+
+			<div class="text-center">
+				<button type="submit" class="btn btn-primary w-50">更新</button>
+			</div>
+		</form>
+
+		<div class="actions text-center">
+			<button type="button" class="btn btn-secondary w-50" onclick="history.back()">戻る</button>
+		</div>
+	</div>
+
+	<!-- ✅ 更新完了モーダル -->
+	<div class="modal fade" id="updateCompleteModal" tabindex="-1" aria-labelledby="updateCompleteLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="updateCompleteLabel">通知</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
+				</div>
+				<div class="modal-body text-center">
+					<p th:if="${updatedUserName != null}"
+						th:text="${updatedUserName} + ' さんの情報を更新しました。'">
+						更新が完了しました。
+					</p>
+					<p th:if="${updatedUserName == null}">
+						更新が完了しました。
+					</p>
+				</div>
+				<form action="menu" method="get">
+					<div class="modal-footer justify-content-center">
+						<button type="submit" class="btn btn-primary" data-bs-dismiss="modal">閉じる</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script th:inline="javascript">
+		document.addEventListener('DOMContentLoaded', function () {
+			const updated = /*[[${updated}]]*/ false;
+			if (updated) {
+				const modal = new bootstrap.Modal(document.getElementById('updateCompleteModal'), {
+					backdrop: 'static',
+					keyboard: false
+				});
+				modal.show();
+			}
+		});
+	</script>
+</body>
+
+</html>
