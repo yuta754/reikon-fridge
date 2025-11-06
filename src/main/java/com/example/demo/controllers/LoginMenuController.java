@@ -29,6 +29,11 @@ public class LoginMenuController {
 	public LoginMenuController(UserService userService) {
 		this.userService = userService;
 	}
+	
+	@GetMapping("/")
+    public String root() {
+        return "login"; // templates/login.html を返す
+    }
 
 	/**
 	 * ログイン画面の表示
