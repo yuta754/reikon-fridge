@@ -7,16 +7,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
     :root{
-      --primary-color: #0077b6; /* 濃い青 */
-      --background-dark: #e6f7ff; /* 淡い水色 */
+      --primary-color: #0077b6;
+      --background-dark: #e6f7ff;
       --bg:#f8fafc;
       --card:#ffffff;
       --muted:#64748b;
       --accent:#38bdf8;
       --radius:14px;
       font-family: Inter, system-ui, -apple-system, "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", sans-serif;
-      /* グラデーションの色定義 */
-      --gradient-top: #cce7ff; 
+      --gradient-top: #cce7ff;
       --gradient-middle: #f9fcff;
       --gradient-bottom: #ffffff;
     }
@@ -28,48 +27,257 @@
       padding:28px;
       display:flex;
       justify-content:center;
-      /* 縦グラデーション */
       background: linear-gradient(to bottom, var(--gradient-top) 0%, var(--gradient-middle) 50%, var(--gradient-bottom) 100%);
       min-height: 100vh;
     }
-    .app{width: 1100px;margin: 0 auto;background-color: #FFFFFF;padding: 20px 20px 20px 10px;border: 1px solid #C8C8C8;border-radius: 8px;box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);}
-    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-    .brand{display:flex;align-items:center;gap:12px;}
-    .back-btn {background: #e2e8f0;border: none;border-radius: 8px;padding: 6px 12px;margin-right: 10px;font-size: 14px;color: #334155;cursor: pointer;transition: background 0.2s ease, transform 0.1s ease;}
-    .back-btn:hover {background: #cbd5e1;transform: translateY(-1px);}
-    .logo{width:46px;height:46px;border-radius:10px;background:var(--accent);display:grid;place-items:center;font-weight:700;font-size:18px;color:white;}
-    h1{font-size:22px;margin:0;}
-    .actions{display:flex;align-items:center;gap:10px;}
-    .search-box input[type="text"]{height: 40px;padding:6px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;}
-    .search-box button,.add-btn{border:none;border-radius:8px;padding:6px 12px;cursor:pointer;}
-    .search-box button{height:40px;background:#3b82f6;color:white;}
-    .add-btn{background:#3b82f6;color:white;}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:20px;}
-    .card{width: 265px; background:var(--card);border-radius:var(--radius);padding:16px;border:1px solid #e2e8f0;box-shadow:0 2px 6px rgba(0,0,0,0.04);transition:transform .2s ease, box-shadow .2s ease;}
-    .card:hover{transform:translateY(-4px);box-shadow:0 6px 16px rgba(0,0,0,0.08);}
-    .card-top{display:flex;align-items:center;gap:12px;}
-    .avatar{width:54px;height:54px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#5eead4);display:grid;place-items:center;font-size:26px;}
-    .meta h3{margin:0;font-size:16px;}
-    .meta p{margin:0;color:var(--muted);font-size:13px;}
-    .progress{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:8px;}
-    .progress > i{display:block;height:100%;border-radius:999px;}
-    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
-    .tag{font-size:12px;padding:5px 10px;border-radius:999px;background:#f1f5f9;color:var(--muted);}
-    .card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:14px;}
-    .qty{font-weight:600;color:#0f172a;}
-    .update-btn, .use-btn {border: none;border-radius: 8px;padding: 5px 12px;font-size: 13px;color: white;cursor: pointer;transition: background-color 0.2s ease, transform 0.1s ease;}
-    .update-btn {background-color: #10b981;}
-    .update-btn:hover {background-color: #059669;transform: translateY(-1px);}
-    .use-btn {background-color: #f59e0b;}
-    .use-btn:hover {background-color: #d97706;transform: translateY(-1px);}
-    .button-group {display: flex;gap: 8px;}
-    .genre-filter {display: flex;flex-wrap: wrap;justify-content: center;gap: 10px;margin: 16px 0 10px 0;}
-    .genre-btn {background: #fff;border: 1px solid #d1d5db;border-radius: 20px;padding: 6px 14px;font-size: 14px;cursor: pointer;color: #334155;box-shadow: 0 2px 4px rgba(0,0,0,0.05);transition: all 0.2s ease;}
-    .genre-btn:hover {background: #e0f2fe;border-color: #38bdf8;transform: translateY(-2px);}
-    .genre-btn.active {background: #38bdf8;color: white;border-color: #38bdf8;box-shadow: 0 3px 8px rgba(56,189,248,0.3);}
+    .app{
+      width: 1100px;
+      margin: 0 auto;
+      background-color: #FFFFFF;
+      padding: 20px;
+      border: 1px solid #C8C8C8;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .back-btn {
+      background: #e2e8f0;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      margin-right: 10px;
+      font-size: 14px;
+      color: #334155;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+    .back-btn:hover {
+      background: #cbd5e1;
+      transform: translateY(-1px);
+    }
+    .logo{
+      width:46px;
+      height:46px;
+      border-radius:10px;
+      background:var(--accent);
+      display:grid;
+      place-items:center;
+      font-weight:700;
+      font-size:18px;
+      color:white;
+    }
+    h1{
+      font-size:22px;
+      margin:0;
+    }
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .search-box {
+      display: flex;
+      gap: 8px;
+    }
+    .search-box input[type="text"]{
+      height: 40px;
+      padding:6px 10px;
+      border:1px solid #cbd5e1;
+      border-radius:8px;
+      font-size:14px;
+      min-width: 150px;
+    }
+    .search-box button,.add-btn{
+      border:none;
+      border-radius:8px;
+      padding:6px 12px;
+      cursor:pointer;
+    }
+    .search-box button{
+      height:40px;
+      background:#3b82f6;
+      color:white;
+    }
+    .add-btn{
+      background:#3b82f6;
+      color:white;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:16px;
+      margin-top:20px;
+    }
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:16px;
+      border:1px solid #e2e8f0;
+      box-shadow:0 2px 6px rgba(0,0,0,0.04);
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+    .card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 6px 16px rgba(0,0,0,0.08);
+    }
+    .card-top{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .avatar{
+      width:54px;
+      height:54px;
+      border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),#5eead4);
+      display:grid;
+      place-items:center;
+      font-size:26px;
+      flex-shrink: 0;
+    }
+    .meta {
+      flex: 1;
+      min-width: 0;
+    }
+    .meta h3{
+      margin:0;
+      font-size:16px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .meta p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .progress{
+      height:8px;
+      background:#e2e8f0;
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:8px;
+    }
+    .progress > i{
+      display:block;
+      height:100%;
+      border-radius:999px;
+    }
+    .tags{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .tag{
+      font-size:12px;
+      padding:5px 10px;
+      border-radius:999px;
+      background:#f1f5f9;
+      color:var(--muted);
+    }
+    .card-footer{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:10px;
+      font-size:14px;
+      gap: 8px;
+    }
+    .qty{
+      font-weight:600;
+      color:#0f172a;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .update-btn, .use-btn {
+      border: none;
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 13px;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+    .update-btn {
+      background-color: #10b981;
+    }
+    .update-btn:hover {
+      background-color: #059669;
+      transform: translateY(-1px);
+    }
+    .use-btn {
+      background-color: #f59e0b;
+    }
+    .use-btn:hover {
+      background-color: #d97706;
+      transform: translateY(-1px);
+    }
+    .button-group {
+      display: flex;
+      gap: 8px;
+    }
+    .genre-filter {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 16px 0 10px 0;
+    }
+    .genre-btn {
+      background: #fff;
+      border: 1px solid #d1d5db;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      color: #334155;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+    }
+    .genre-btn:hover {
+      background: #e0f2fe;
+      border-color: #38bdf8;
+      transform: translateY(-2px);
+    }
+    .genre-btn.active {
+      background: #38bdf8;
+      color: white;
+      border-color: #38bdf8;
+      box-shadow: 0 3px 8px rgba(56,189,248,0.3);
+    }
 
-	.logout-button{background-color:var(--background-dark);color:var(--primary-color);border: 1px solid var(--primary-color);padding:8px 15px;cursor:pointer;border-radius: 20px;transition:all 0.2s;font-size:0.9em;}
-	.logout-button:hover{background-color:var(--primary-color);color: white;box-shadow:0 4px 8px rgba(0, 0, 0, 0.1);}
+    .logout-button{
+      background-color:var(--background-dark);
+      color:var(--primary-color);
+      border: 1px solid var(--primary-color);
+      padding:8px 15px;
+      cursor:pointer;
+      border-radius: 20px;
+      transition:all 0.2s;
+      font-size:0.9em;
+      white-space: nowrap;
+    }
+    .logout-button:hover{
+      background-color:var(--primary-color);
+      color: white;
+      box-shadow:0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
     /* 固定ゴミ箱 */
     #trash-area {
@@ -129,29 +337,36 @@
       background: white;
       border-radius: 14px;
       padding: 24px;
-      width: 300px;
+      width: 90%;
+      max-width: 400px;
       text-align: center;
     }
     .modal-actions {
       margin-top: 16px;
       display: flex;
       justify-content: space-around;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     .confirm {
       background: #ef4444;
       color: white;
       border: none;
       border-radius: 8px;
-      padding: 6px 16px;
+      padding: 8px 16px;
       cursor: pointer;
+      flex: 1;
+      min-width: 80px;
     }
     .cancel {
       background: #94a3b8;
       color: white;
       border: none;
       border-radius: 8px;
-      padding: 6px 16px;
+      padding: 8px 16px;
       cursor: pointer;
+      flex: 1;
+      min-width: 80px;
     }
 
     /* 追加ボタン */
@@ -175,19 +390,211 @@
       transform: translateY(20px);
       transition: all 0.6s ease;
       z-index: 1000;
+      border: none;
     }
-    .add-food-btn.show {opacity: 1;pointer-events: all;transform: translateY(0);}
-    .add-food-btn:hover {background: linear-gradient(135deg, #2563eb, #3b82f6);transform: translateY(-2px);}
-    .add-symbol {font-size: 22px;}
+    .add-food-btn.show {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+    .add-food-btn:hover {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      transform: translateY(-2px);
+    }
+    .add-symbol {
+      font-size: 22px;
+    }
+
+    /* スマホ対応 */
+    @media (max-width: 768px) {
+      body {
+        padding: 12px;
+      }
+      
+      .app {
+        width: 100%;
+        padding: 15px;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .brand {
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .brand:last-child {
+        justify-content: flex-end;
+      }
+
+      h1 {
+        font-size: 18px;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+
+      .actions {
+        width: 100%;
+        margin-top: 8px;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+
+      .search-box input[type="text"] {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .search-box button {
+        padding: 8px 16px;
+      }
+
+      .genre-filter {
+        gap: 8px;
+        margin: 12px 0 8px 0;
+      }
+
+      .genre-btn {
+        font-size: 12px;
+        padding: 5px 12px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 15px;
+      }
+
+      .card {
+        padding: 14px;
+      }
+
+      .avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 24px;
+      }
+
+      .meta h3 {
+        font-size: 15px;
+      }
+
+      .meta p {
+        font-size: 12px;
+      }
+
+      .card-footer {
+        font-size: 13px;
+        flex-wrap: wrap;
+      }
+
+      .button-group {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .update-btn, .use-btn {
+        padding: 6px 14px;
+        font-size: 12px;
+      }
+
+      /* ゴミ箱をスマホで小さく */
+      #trash-area {
+        right: 15px;
+        bottom: 100px;
+      }
+
+      #trash {
+        width: 70px;
+        height: 80px;
+      }
+
+      .lid {
+        width: 70px;
+        height: 18px;
+      }
+
+      .bin {
+        width: 70px;
+        height: 62px;
+        top: 18px;
+      }
+
+      #trash-area p {
+        font-size: 11px;
+      }
+
+      /* 追加ボタンをスマホで調整 */
+      .add-food-btn {
+        left: 15px;
+        bottom: 100px;
+        padding: 10px 16px;
+        font-size: 14px;
+      }
+
+      .add-symbol {
+        font-size: 18px;
+      }
+
+      .modal-content {
+        width: 95%;
+        padding: 20px;
+      }
+
+      .logout-button {
+        padding: 6px 12px;
+        font-size: 0.85em;
+      }
+    }
+
+    /* 小型スマホ対応 */
+    @media (max-width: 480px) {
+      .app {
+        padding: 12px;
+      }
+
+      h1 {
+        font-size: 16px;
+      }
+
+      .back-btn {
+        padding: 5px 10px;
+        font-size: 13px;
+      }
+
+      .genre-btn {
+        font-size: 11px;
+        padding: 4px 10px;
+      }
+
+      .card {
+        padding: 12px;
+      }
+
+      .avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+      }
+    }
   </style>
 </head>
 <body>
   <main class="app">
     <header class="header">
       <div class="brand">
-		<form action="/menu" method="get">
+        <form action="/menu" method="get" style="margin: 0;">
            <button type="submit" class="back-btn">↩ 戻る</button>
-		</form>
+        </form>
         <div class="logo">🍚</div>
         <div><h1>冷蔵庫一覧</h1></div>
       </div>
@@ -198,12 +605,12 @@
         </form>
       </div>
       <div class="brand">
-		<form action="/logout" method="post">
-		  <button type="submit" class="logout-button">
-			<i class="fa-solid fa-right-from-bracket"></i> ログアウト
-		  </button>
-		</form>
-	  </div>
+        <form action="/logout" method="post" style="margin: 0;">
+          <button type="submit" class="logout-button">
+            <i class="fa-solid fa-right-from-bracket"></i> ログアウト
+          </button>
+        </form>
+      </div>
     </header>
      <div class="genre-filter">
       <button class="genre-btn active" onclick="filterByGenre('all', this)">すべて</button>
@@ -214,7 +621,7 @@
       <button class="genre-btn" onclick="filterByGenre('5', this)">飲料 🧃</button>
       <button class="genre-btn" onclick="filterByGenre('6', this)">野菜 🥬</button>
       <button class="genre-btn" onclick="filterByGenre('7', this)">調味料 🧂</button>
-      <button class="genre-btn" onclick="filterByGenre('8', this)">その他   </button>
+      <button class="genre-btn" onclick="filterByGenre('8', this)">その他</button>
      </div>
 
     <section class="grid">
@@ -224,39 +631,31 @@
           <div class="meta">
             <h3 th:text="${food.foodName}">牛乳</h3>
             <span th:if="${food.date != null}">
-            	<p th:text="'消費/賞味期限：' + ${food.date}"></p>
+              <p th:text="'消費/賞味期限：' + ${food.date}"></p>
             </span>
-			<span th:if="${food.date == null}">
-				<p th:text="'期限入力なし'"></p>
-			</span>
-<!--バーを非表示に-->
-<!--<div class="progress">-->
-<!--<i th:style="'width:' + ${food.remainingPercent} + '%;background:' + ${food.barColor}"></i>-->
-<!--</div>-->
+            <span th:if="${food.date == null}">
+                <p th:text="'期限入力なし'"></p>
+            </span>
           </div>
         </div>
         <div class="tags"><span class="tag">冷蔵</span></div>
         <div class="card-footer">
-		  <span th:if="${food.amount != null or food.bunshi != null or food.bunbo != null}">
+          <span th:if="${food.amount != null or food.bunshi != null or food.bunbo != null}">
             <div class="qty">
               <span th:if="${food.amount != null}" th:text="'残り ' + ${food.amount}"></span>
               <span th:if="${food.amount != null and food.bunshi != null and food.bunbo != null}" th:text="'と ' + ${food.bunbo} + '分の' + ${food.bunshi}"></span>
               <span th:if="${food.amount == null and food.bunshi != null and food.bunbo != null}" th:text="'残り ' + ${food.bunbo} + '分の' + ${food.bunshi}"></span>
             </div>
-		  </span>
+          </span>
           <span th:if="${food.amount == null and food.bunshi == null and food.bunbo == null}" style="font-weight:600;color:#0f172a;">
-			  食材量入力なし
-		  </span>
-          </div>
-        </span>
-        <span th:if="${food.amount == null and food.bunshi == null and food.bunbo == null}">
-		</span>
+              食材量入力なし
+          </span>
           <div class="button-group">
-            <form th:action="@{/selectFoodUpdateFood}" method="get">
+            <form th:action="@{/selectFoodUpdateFood}" method="get" style="margin: 0;">
               <input type="hidden" name="id" th:value="${food.foodId}" />
               <button type="submit" class="update-btn">更新</button>
             </form>
-            <form th:action="@{/selectFoodUseFood}" method="get">
+            <form th:action="@{/selectFoodUseFood}" method="get" style="margin: 0;">
               <input type="hidden" name="id" th:value="${food.foodId}" />
               <button type="submit" class="use-btn">使う</button>
             </form>
@@ -288,10 +687,10 @@
     </div>
 
     <!-- 食材追加ボタン -->
-    <div id="addFoodBtn" class="add-food-btn" onclick="goToAddPage()">
+    <button id="addFoodBtn" class="add-food-btn" onclick="goToAddPage()">
       <span class="add-symbol">＋</span>
       <span class="add-text">食材を追加</span>
-    </div>
+    </button>
   </main>
 
   <!-- JS -->
@@ -323,7 +722,7 @@
       };
 
       document.querySelectorAll(".card").forEach(card => {
-        const genreId = Number(card.dataset.genreId); 
+        const genreId = Number(card.dataset.genreId);
         const qtyDiv = card.querySelector(".qty");    
         const iconSpan = card.querySelector(".icon");
 
@@ -338,70 +737,69 @@
 
     // ドラッグ削除
     document.addEventListener("DOMContentLoaded", () => {
-  const trash = document.getElementById("trash");
-  const modal = document.getElementById("modal");
-  const cancelBtn = modal.querySelector(".cancel");
-  let draggedCard = null;
+      const trash = document.getElementById("trash");
+      const modal = document.getElementById("modal");
+      const cancelBtn = modal.querySelector(".cancel");
+      let draggedCard = null;
 
-  document.querySelectorAll(".card").forEach(card => {
-    card.setAttribute("draggable", "true");
-    card.addEventListener("dragstart", () => {
-      draggedCard = card;
-      trash.classList.add("open");
+      document.querySelectorAll(".card").forEach(card => {
+        card.setAttribute("draggable", "true");
+        card.addEventListener("dragstart", () => {
+          draggedCard = card;
+          trash.classList.add("open");
+        });
+        card.addEventListener("dragend", () => {
+          trash.classList.remove("open");
+        });
+      });
+
+      trash.addEventListener("dragover", e => { e.preventDefault(); trash.classList.add("open"); });
+      trash.addEventListener("dragleave", () => trash.classList.remove("open"));
+      trash.addEventListener("drop", e => {
+        e.preventDefault();
+        trash.classList.remove("open");
+        const foodName = draggedCard.querySelector("h3").textContent;
+        modal.dataset.foodId = draggedCard.querySelector("input[name='id']").value;
+        document.getElementById("modal-text").textContent = `${foodName}を廃棄しますか？ 削除しますか？`;
+        modal.style.display = "flex";
+      });
+
+      cancelBtn.addEventListener("click", () => modal.style.display = "none");
+
+      // 削除ボタン
+      document.getElementById("delete-btn").addEventListener("click", () => {
+        const id = modal.dataset.foodId;
+        fetch('/deleteFood', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({id: id})
+        })
+        .then(res => res.json())
+        .then(data => {
+          if(data.success){
+            draggedCard.remove();
+            modal.style.display = "none";
+          }
+        });
+      });
+
+      // 廃棄ボタン
+      document.getElementById("discard-btn").addEventListener("click", () => {
+        const id = modal.dataset.foodId;
+        fetch('/updateFoodFlag', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({id: id, flag: 3})
+        })
+        .then(res => res.json())
+        .then(data => {
+          if(data.success){
+            draggedCard.remove();
+            modal.style.display = "none";
+          }
+        });
+      });
     });
-    card.addEventListener("dragend", () => {
-      trash.classList.remove("open");
-    });
-  });
-
-  trash.addEventListener("dragover", e => { e.preventDefault(); trash.classList.add("open"); });
-  trash.addEventListener("dragleave", () => trash.classList.remove("open"));
-  trash.addEventListener("drop", e => {
-    e.preventDefault();
-    trash.classList.remove("open");
-    const foodName = draggedCard.querySelector("h3").textContent;
-    modal.dataset.foodId = draggedCard.querySelector("input[name='id']").value;
-    document.getElementById("modal-text").textContent = `${foodName}を廃棄しますか？ 削除しますか？`;
-    modal.style.display = "flex";
-  });
-
-  cancelBtn.addEventListener("click", () => modal.style.display = "none");
-
-  // 削除ボタン
-  document.getElementById("delete-btn").addEventListener("click", () => {
-    const id = modal.dataset.foodId;
-    fetch('/deleteFood', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({id: id})
-    })
-    .then(res => res.json())
-    .then(data => {
-      if(data.success){
-        draggedCard.remove(); // カード削除
-        modal.style.display = "none";
-      }
-    });
-  });
-
-  // 廃棄ボタン
-  document.getElementById("discard-btn").addEventListener("click", () => {
-    const id = modal.dataset.foodId;
-    fetch('/updateFoodFlag', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({id: id, flag: 3})
-    })
-    .then(res => res.json())
-    .then(data => {
-      if(data.success){
-        draggedCard.remove(); // 画面上から消す
-        modal.style.display = "none";
-      }
-    });
-  });
-});
-
 
     // 追加ボタン表示
     window.addEventListener("DOMContentLoaded", () => {
@@ -433,9 +831,9 @@
 <script>
   function goBack() {
     if (document.referrer) {
-      window.history.back(); 
+      window.history.back();
     } else {
-      window.location.href = "/menu"; //
+      window.location.href = "/menu";
     }
   }
 </script>
