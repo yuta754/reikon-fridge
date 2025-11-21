@@ -127,6 +127,7 @@
       border:1px solid #e2e8f0;
       box-shadow:0 2px 6px rgba(0,0,0,0.04);
       transition:transform .2s ease, box-shadow .2s ease;
+      user-select: none;
     }
     .card:hover{
       transform:translateY(-4px);
@@ -295,6 +296,7 @@
       height: 100px;
       position: relative;
       cursor: grab;
+      transition: transform 0.2s ease;
     }
     .lid {
       width: 90px;
@@ -735,7 +737,7 @@
       });
     });
 
-    // ドラッグ削除
+    // ドラッグ削除（PC & スマホ対応）
     document.addEventListener("DOMContentLoaded", () => {
       const trash = document.getElementById("trash");
       const modal = document.getElementById("modal");
@@ -743,6 +745,7 @@
       let draggedCard = null;
 
       document.querySelectorAll(".card").forEach(card => {
+        // PC用ドラッグイベント
         card.setAttribute("draggable", "true");
         card.addEventListener("dragstart", () => {
           draggedCard = card;
@@ -751,9 +754,131 @@
         card.addEventListener("dragend", () => {
           trash.classList.remove("open");
         });
+
+        // スマホ用タッチイベント
+        let touchStartX, touchStartY;
+        let isDragging = false;
+        let clone = null;
+        let longPressTimer = null;
+
+        card.addEventListener("touchstart", (e) => {
+          const touch = e.touches[0];
+          touchStartX = touch.clientX;
+          touchStartY = touch.clientY;
+          isDragging = false;
+          
+          // 長押し判定（300ms後に開始）
+          longPressTimer = setTimeout(() => {
+            isDragging = true;
+            draggedCard = card;
+            
+            // ドラッグ中の視覚フィードバック用クローン作成
+            clone = card.cloneNode(true);
+            clone.style.position = "fixed";
+            clone.style.opacity = "0.7";
+            clone.style.pointerEvents = "none";
+            clone.style.zIndex = "9999";
+            clone.style.width = card.offsetWidth + "px";
+            clone.style.transform = "scale(1.05)";
+            document.body.appendChild(clone);
+            
+            card.style.opacity = "0.3";
+            trash.classList.add("open");
+            
+            // 振動フィードバック（対応端末のみ）
+            if (navigator.vibrate) {
+              navigator.vibrate(50);
+            }
+          }, 300);
+        });
+
+        card.addEventListener("touchmove", (e) => {
+          const touch = e.touches[0];
+          const moveX = Math.abs(touch.clientX - touchStartX);
+          const moveY = Math.abs(touch.clientY - touchStartY);
+          
+          // 少し動いたら長押しタイマーをキャンセル
+          if (!isDragging && (moveX > 10 || moveY > 10)) {
+            clearTimeout(longPressTimer);
+            return;
+          }
+          
+          if (!isDragging) return;
+          
+          e.preventDefault();
+          
+          if (clone) {
+            clone.style.left = (touch.clientX - clone.offsetWidth / 2) + "px";
+            clone.style.top = (touch.clientY - clone.offsetHeight / 2) + "px";
+          }
+          
+          // ゴミ箱との当たり判定
+          const trashRect = trash.getBoundingClientRect();
+          const isOverTrash = (
+            touch.clientX >= trashRect.left &&
+            touch.clientX <= trashRect.right &&
+            touch.clientY >= trashRect.top &&
+            touch.clientY <= trashRect.bottom
+          );
+          
+          if (isOverTrash) {
+            trash.style.transform = "scale(1.1)";
+          } else {
+            trash.style.transform = "scale(1)";
+          }
+        });
+
+        card.addEventListener("touchend", (e) => {
+          clearTimeout(longPressTimer);
+          
+          if (!isDragging) return;
+          
+          const touch = e.changedTouches[0];
+          const trashRect = trash.getBoundingClientRect();
+          const isOverTrash = (
+            touch.clientX >= trashRect.left &&
+            touch.clientX <= trashRect.right &&
+            touch.clientY >= trashRect.top &&
+            touch.clientY <= trashRect.bottom
+          );
+          
+          // クリーンアップ
+          if (clone) {
+            clone.remove();
+            clone = null;
+          }
+          card.style.opacity = "1";
+          trash.classList.remove("open");
+          trash.style.transform = "scale(1)";
+          isDragging = false;
+          
+          // ゴミ箱に入れた場合
+          if (isOverTrash) {
+            const foodName = draggedCard.querySelector("h3").textContent;
+            modal.dataset.foodId = draggedCard.querySelector("input[name='id']").value;
+            document.getElementById("modal-text").textContent = `${foodName}を廃棄しますか？ 削除しますか？`;
+            modal.style.display = "flex";
+          }
+        });
+
+        card.addEventListener("touchcancel", () => {
+          clearTimeout(longPressTimer);
+          if (clone) {
+            clone.remove();
+            clone = null;
+          }
+          card.style.opacity = "1";
+          trash.classList.remove("open");
+          trash.style.transform = "scale(1)";
+          isDragging = false;
+        });
       });
 
-      trash.addEventListener("dragover", e => { e.preventDefault(); trash.classList.add("open"); });
+      // PC用ドロップイベント
+      trash.addEventListener("dragover", e => { 
+        e.preventDefault(); 
+        trash.classList.add("open"); 
+      });
       trash.addEventListener("dragleave", () => trash.classList.remove("open"));
       trash.addEventListener("drop", e => {
         e.preventDefault();
