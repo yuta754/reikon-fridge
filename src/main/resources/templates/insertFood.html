@@ -2,6 +2,7 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>食材登録</title>
 
   <!-- Bootstrap -->
@@ -26,6 +27,10 @@
       --input-border: #cccccc;
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(to bottom, var(--gradient-top), var(--gradient-middle), var(--gradient-bottom));
@@ -35,6 +40,7 @@
       align-items: center;
       min-height: 100vh;
       color: #333;
+      padding: 20px;
     }
 
     .container {
@@ -42,25 +48,27 @@
       padding: 40px 35px;
       border-radius: 16px;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      width: 90%;
+      width: 100%;
       max-width: 550px;
       position: relative;
     }
-	.title-row {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 12px;
-		margin-bottom: 25px;
-	}
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
     h1 {
-		color: var(--primary-color);
-		font-size: 2.0em;
-		font-weight: 700;
-		border-bottom: 2px solid var(--secondary-color);
-		padding-bottom: 6px;
-		margin: 0;
-		display: inline-block;
+      color: var(--primary-color);
+      font-size: 2.0em;
+      font-weight: 700;
+      border-bottom: 2px solid var(--secondary-color);
+      padding-bottom: 6px;
+      margin: 0;
+      display: inline-block;
     }
 
     label {
@@ -68,6 +76,7 @@
       color: #555;
       margin-bottom: 6px;
       display: block;
+      font-size: 0.95em;
     }
 
     input[type="text"],
@@ -121,6 +130,7 @@
       font-size: 0.9em;
       margin-bottom: 15px;
       transition: background-color 0.2s;
+      width: auto;
     }
 
     .fraction-btn:hover {
@@ -152,10 +162,44 @@
       font-weight: 600;
       text-align: center;
       margin-bottom: 15px;
+      font-size: 0.95em;
     }
 
     #fractionInput {
       display: none;
+      margin-bottom: 15px;
+    }
+
+    .amount-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .amount-input-group input {
+      width: 100px;
+      margin-bottom: 0;
+    }
+
+    .amount-input-group span {
+      white-space: nowrap;
+    }
+
+    .fraction-input-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .fraction-input-group input {
+      width: 70px;
+      margin-bottom: 0;
+    }
+
+    .fraction-input-group span {
+      white-space: nowrap;
     }
 
     /* モーダルボタン */
@@ -166,6 +210,174 @@
     .btn-primary:hover {
       background-color: #005a8a;
     }
+
+    /* スマホ対応 */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 25px 20px;
+        border-radius: 12px;
+      }
+
+      h1 {
+        font-size: 1.6em;
+      }
+
+      .title-row {
+        margin-bottom: 20px;
+      }
+
+      label {
+        font-size: 0.9em;
+        margin-bottom: 5px;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      select,
+      input[type="date"] {
+        padding: 9px;
+        font-size: 0.95em;
+        margin-bottom: 12px;
+      }
+
+      .header-controls {
+        margin-bottom: 15px;
+      }
+
+      .logout-button {
+        padding: 7px 12px;
+        font-size: 0.85em;
+      }
+
+      .fraction-btn {
+        padding: 7px 12px;
+        font-size: 0.85em;
+        margin-bottom: 12px;
+      }
+
+      .button {
+        padding: 12px;
+        font-size: 1em;
+      }
+
+      .amount-input-group {
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+
+      .amount-input-group input {
+        width: 90px;
+        font-size: 0.95em;
+      }
+
+      .fraction-input-group {
+        gap: 5px;
+      }
+
+      .fraction-input-group input {
+        width: 60px;
+        font-size: 0.9em;
+      }
+
+      .fraction-input-group span {
+        font-size: 0.9em;
+      }
+
+      #fractionInput {
+        margin-bottom: 12px;
+      }
+
+      .error-message {
+        font-size: 0.9em;
+        margin-bottom: 12px;
+      }
+    }
+
+    /* 小型スマホ対応 */
+    @media (max-width: 480px) {
+      body {
+        padding: 8px;
+      }
+
+      .container {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 1.4em;
+        padding-bottom: 4px;
+      }
+
+      label {
+        font-size: 0.85em;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      select,
+      input[type="date"] {
+        padding: 8px;
+        font-size: 0.9em;
+        margin-bottom: 10px;
+      }
+
+      .logout-button {
+        padding: 6px 10px;
+        font-size: 0.8em;
+      }
+
+      .fraction-btn {
+        padding: 6px 10px;
+        font-size: 0.8em;
+      }
+
+      .button {
+        padding: 11px;
+        font-size: 0.95em;
+      }
+
+      .amount-input-group input {
+        width: 80px;
+        font-size: 0.9em;
+      }
+
+      .amount-input-group span {
+        font-size: 0.85em;
+      }
+
+      .fraction-input-group input {
+        width: 55px;
+        font-size: 0.85em;
+      }
+
+      .fraction-input-group span {
+        font-size: 0.85em;
+      }
+
+      .modal-dialog {
+        margin: 10px;
+      }
+
+      .modal-content {
+        padding: 10px;
+      }
+    }
+
+    /* 横向き対応 */
+    @media (max-height: 600px) and (orientation: landscape) {
+      body {
+        padding: 10px;
+        align-items: flex-start;
+      }
+
+      .container {
+        margin: 10px auto;
+      }
+    }
   </style>
 </head>
 <body>
@@ -173,14 +385,14 @@
   <div class="container">
 
     <div class="header-controls">
-      <form action="/selectFood" method="get">
+      <form action="/selectFood" method="get" style="margin: 0;">
         <button type="submit" class="logout-button">↩ 戻る</button>
       </form>
     </div>
 
-	<div class="title-row">
-	    <h1>食材登録</h1>
-	</div>
+    <div class="title-row">
+      <h1>食材登録</h1>
+    </div>
 
     <form id="myForm" action="insertFood" method="post" th:object="${insertFoodForm}">
       <div class="error-message" th:if="${message} != null">
@@ -197,21 +409,25 @@
       </select>
 
       <label>食材量</label>
-      <div>
-        <input type="number" min="1" th:field="*{amount}" style="width:100px; display:inline-block;">
+      <div class="amount-input-group">
+        <input type="number" min="1" th:field="*{amount}">
         <span id="unitLabel1">---</span>
       </div>
 
       <div id="fractionInput">
-        と <input type="number" th:field="*{bunbo}" min="2" style="width:60px;"> 分の
-        <input type="number" th:field="*{bunshi}" min="1" style="width:60px;">
-        <span id="unitLabel2">---</span>
+        <div class="fraction-input-group">
+          <span>と</span>
+          <input type="number" th:field="*{bunbo}" min="2">
+          <span>分の</span>
+          <input type="number" th:field="*{bunshi}" min="1">
+          <span id="unitLabel2">---</span>
+        </div>
       </div>
 
       <button type="button" class="fraction-btn" id="addFractionBtn">分数を追加</button>
 
       <label>消費期限 / 賞味期限</label>
-      <input type="text" id="calendar" th:field="*{date}">
+      <input type="text" id="calendar" th:field="*{date}" placeholder="日付を選択">
 
       <button type="button" class="button" data-bs-toggle="modal" data-bs-target="#modal">登録</button>
     </form>
@@ -220,7 +436,7 @@
 
   <!-- モーダル -->
   <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="modalLabel">確認</h1>
@@ -237,7 +453,11 @@
 
   <!-- スクリプト -->
   <script>
-    flatpickr("#calendar", { dateFormat: "Y-m-d", locale: "ja" });
+    flatpickr("#calendar", { 
+      dateFormat: "Y-m-d", 
+      locale: "ja",
+      disableMobile: false
+    });
 
     const addFractionBtn = document.getElementById('addFractionBtn');
     const fractionInput = document.getElementById('fractionInput');
