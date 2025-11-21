@@ -1,771 +1,577 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ja">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>🏠 メニュー画面</title>
+	<title>🏠 Rei Concierge</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 	<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
 	<style>
-		:root {
-			--gradient-top: #cce7ff;
-			--gradient-middle: #f9fcff;
-			--gradient-bottom: #ffffff;
-		}
-
 		* {
 			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
 		}
 
 		body {
 			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 			min-height: 100vh;
-			min-height: -webkit-fill-available;
-			margin: 0;
-			padding: 15px;
-			text-align: center;
-			background: linear-gradient(to bottom, var(--gradient-top) 0%, var(--gradient-middle) 50%, var(--gradient-bottom) 100%);
+			background: #ffffff;
+			padding: 0;
+			overflow-x: hidden;
 		}
 
-		.room {
-			width: 100%;
-			max-width: 1100px;
+		.container {
+			max-width: 1400px;
 			margin: 0 auto;
-			background-color: #FFFFFF;
-			padding: 20px 15px;
-			border: 1px solid #C8C8C8;
-			border-radius: 12px;
-			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+			padding: 20px;
 		}
 
-		.header-controls {
+		/* ヘッダー */
+		.header {
+			background: rgba(255, 255, 255, 0.95);
+			backdrop-filter: blur(10px);
+			padding: 20px 30px;
+			border-radius: 20px;
+			margin-bottom: 30px;
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 			display: flex;
-			justify-content: flex-end;
-			align-items: flex-start;
-			margin-bottom: 15px;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.logo {
+			font-size: clamp(24px, 5vw, 36px);
+			font-weight: 800;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+			letter-spacing: 1px;
 		}
 
 		.logout-button {
-			background-color: #E0E0E0;
-			color: #4A4A4A;
+			background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+			color: white;
 			border: none;
-			padding: 10px 16px;
+			padding: 12px 24px;
+			border-radius: 12px;
 			cursor: pointer;
-			border-radius: 8px;
-			transition: background-color 0.2s;
-			font-size: 0.9em;
-			-webkit-tap-highlight-color: transparent;
+			font-weight: 600;
+			font-size: 14px;
+			transition: all 0.3s ease;
+			box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
 		}
 
-		.logout-button:active {
-			background-color: #CCCCCC;
+		.logout-button:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
 		}
 
-		@media (hover: hover) {
-			.logout-button:hover {
-				background-color: #CCCCCC;
-			}
-		}
-
-		h1 {
-			font-family: 'Cinzel', serif;
-			font-size: clamp(24px, 6vw, 42px);
-			color: #1a1a1a;
-			letter-spacing: 2px;
-			text-transform: uppercase;
-			border-bottom: 2px solid #c5a572;
-			display: inline-block;
-			padding-bottom: 6px;
-			margin: 10px 0 30px 0;
-		}
-
-		.main-content {
-			width: 100%;
+		/* メインコンテンツエリア */
+		.main-grid {
 			display: grid;
-			grid-template-columns: 1fr;
-			gap: 20px;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 25px;
 			margin-bottom: 30px;
 		}
 
-		.refrigerator-section {
-			width: 100%;
-		}
-			cursor: pointer;
-			background: linear-gradient(145deg, #F5F5F5, #E0E0E0);
-			border: 1px solid #C8C8C8;
-			padding: 0;
-			width: 100%;
-			min-height: 280px;
-			height: auto;
-			border-radius: 15px;
-			box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.15);
-			transition: transform 0.2s, box-shadow 0.2s;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			-webkit-tap-highlight-color: transparent;
-		}
-
-		.refrigerator-button:active {
-			transform: scale(0.98);
-		}
-
-		@media (hover: hover) {
-			.refrigerator-button:hover {
-				transform: translateY(-5px);
-				box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.2);
-			}
-		}
-
-		.refrigerator-icon {
-			font-size: clamp(100px, 20vw, 150px);
-			color: #28A745;
-			margin-bottom: 20px;
-		}
-
-		.refrigerator-label {
-			font-weight: bold;
-			font-size: clamp(1.2em, 4vw, 1.5em);
-			color: #333;
-		}
-
-		.controller-panel {
-			background-color: #343A40;
-			color: #fff;
-			padding: 20px;
-			border-radius: 12px;
-			width: 100%;
-		}
-
-		.controller-panel h2 {
-			font-size: 1.1em;
-			margin-bottom: 15px;
-			border-bottom: 1px solid #495057;
-			padding-bottom: 8px;
+		/* 冷蔵庫カード */
+		.fridge-card {
+			background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+			border-radius: 24px;
+			padding: 40px;
 			text-align: center;
+			cursor: pointer;
+			transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+			border: none;
+			width: 100%;
+			position: relative;
+			overflow: hidden;
 		}
 
+		.fridge-card::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
+			opacity: 0;
+			transition: opacity 0.3s ease;
+		}
+
+		.fridge-card:hover {
+			transform: translateY(-10px) scale(1.02);
+			box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+		}
+
+		.fridge-card:hover::before {
+			opacity: 1;
+		}
+
+		.fridge-icon {
+			font-size: clamp(80px, 15vw, 120px);
+			margin-bottom: 20px;
+			animation: float 3s ease-in-out infinite;
+		}
+
+		@keyframes float {
+			0%, 100% { transform: translateY(0px); }
+			50% { transform: translateY(-10px); }
+		}
+
+		.fridge-title {
+			font-size: clamp(24px, 4vw, 32px);
+			font-weight: 700;
+			color: #2d3748;
+			margin-bottom: 10px;
+		}
+
+		.fridge-subtitle {
+			font-size: 14px;
+			color: #4a5568;
+			opacity: 0.8;
+		}
+
+		/* パネルグリッド */
 		.panel-grid {
 			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			gap: 10px;
-			width: 100%;
+			grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+			gap: 20px;
 		}
 
-		.panel-item {
-			width: 100%;
-			min-height: 100px;
-			border: none;
-			padding: 15px 10px;
+		.panel-card {
+			background: white;
+			border-radius: 20px;
+			padding: 30px 20px;
+			text-align: center;
 			cursor: pointer;
-			border-radius: 10px;
-			transition: all 0.2s;
-			font-size: 1em;
-			-webkit-tap-highlight-color: transparent;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
+			transition: all 0.3s ease;
+			box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+			border: none;
+			width: 100%;
+			position: relative;
+			overflow: hidden;
 		}
 
-		.panel-item:active {
-			transform: scale(0.95);
+		.panel-card::after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 0;
+			height: 0;
+			border-radius: 50%;
+			background: rgba(102, 126, 234, 0.1);
+			transform: translate(-50%, -50%);
+			transition: width 0.6s, height 0.6s;
 		}
 
-		.panel-item .label {
-			display: block;
-			font-size: 0.85em;
-			margin-top: 5px;
-			font-weight: bold;
+		.panel-card:hover::after {
+			width: 300px;
+			height: 300px;
+		}
+
+		.panel-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 		}
 
 		.panel-icon {
-			font-size: 32px;
-			margin-bottom: 8px;
+			font-size: 48px;
+			margin-bottom: 15px;
+			position: relative;
+			z-index: 1;
 		}
 
-		.waste-rate-button {
-			background-color: #FFC107;
-			color: #333;
+		.panel-card.waste { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); }
+		.panel-card.shopping { background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; }
+		.panel-card.ai { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); color: white; }
+		.panel-card.settings { background: linear-gradient(135deg, #dfe6e9 0%, #b2bec3 100%); }
+
+		.panel-label {
+			font-size: 16px;
+			font-weight: 600;
+			position: relative;
+			z-index: 1;
 		}
 
-		.waste-rate-button:active {
-			background-color: #E0A800;
-		}
-
-		.shopping-list-button {
-			background-color: #17A2B8;
-			color: #fff;
-		}
-
-		.shopping-list-button:active {
-			background-color: #138496;
-		}
-
-		.user-manage-button {
-			background-color: #6C757D;
-			color: #fff;
-		}
-
-		.user-manage-button:active {
-			background-color: #5A6268;
-		}
-
-		.ai-chat-button {
-			background-color: #9C27B0;
-			color: #fff;
-		}
-
-		.ai-chat-button:active {
-			background-color: #7B1FA2;
-		}
-
-		.event-section {
-			margin-top: 30px;
-			background: linear-gradient(135deg, #ffe4a1, #ffb347);
-			padding: 20px;
-			border-radius: 12px;
-			color: #4a3b00;
-			box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+		/* イベントカード */
+		.event-card {
+			background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+			border-radius: 20px;
+			padding: 30px;
+			margin-bottom: 30px;
 			cursor: pointer;
-			-webkit-tap-highlight-color: transparent;
+			transition: all 0.3s ease;
+			box-shadow: 0 5px 20px rgba(253, 203, 110, 0.3);
+			border: 3px solid rgba(255, 255, 255, 0.5);
 		}
 
-		.event-section h3 {
-			font-size: clamp(1.1em, 4vw, 1.3em);
-			margin: 0 0 10px 0;
+		.event-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 10px 30px rgba(253, 203, 110, 0.4);
 		}
 
-		.event-section p {
-			margin: 0;
-			font-size: clamp(0.9em, 3vw, 1em);
-		}
-
-		.calendar-section {
-			margin-top: 30px;
-			background: #fff;
-			padding: 15px;
-			border-radius: 12px;
-			box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-		}
-
-		.calendar-section h3 {
-			margin-bottom: 15px;
-			color: #333;
-			font-size: clamp(1em, 4vw, 1.2em);
-		}
-
-		#calendar {
-			max-width: 100%;
-			margin: 0 auto;
-		}
-
-		.news-section {
-			margin-top: 30px;
-			text-align: left;
-		}
-
-		.news-title {
-			font-size: clamp(1em, 4vw, 1.2em);
-			font-weight: bold;
-			color: #333;
-			margin-bottom: 15px;
-		}
-
-		.news-card {
-			background: #fff;
-			border-left: 5px solid #007BFF;
-			padding: 12px 15px;
-			border-radius: 8px;
-			box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.1);
+		.event-title {
+			font-size: clamp(20px, 4vw, 28px);
+			font-weight: 700;
+			color: #2d3748;
 			margin-bottom: 10px;
-			font-size: clamp(0.85em, 3vw, 0.95em);
 		}
 
-		.news-card strong {
-			color: #007BFF;
+		.event-desc {
+			font-size: 16px;
+			color: #4a5568;
 		}
 
+		/* カレンダーセクション */
+		.calendar-section {
+			background: white;
+			border-radius: 20px;
+			padding: 30px;
+			margin-bottom: 30px;
+			box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+		}
+
+		.section-title {
+			font-size: clamp(20px, 4vw, 26px);
+			font-weight: 700;
+			color: #2d3748;
+			margin-bottom: 20px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		/* ニュースセクション */
+		.news-section {
+			background: white;
+			border-radius: 20px;
+			padding: 30px;
+			box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+		}
+
+		.news-item {
+			padding: 20px;
+			border-left: 4px solid #667eea;
+			background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, rgba(255,255,255,0) 100%);
+			border-radius: 8px;
+			margin-bottom: 15px;
+			transition: all 0.3s ease;
+		}
+
+		.news-item:hover {
+			transform: translateX(5px);
+			background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(255,255,255,0) 100%);
+		}
+
+		.news-date {
+			color: #667eea;
+			font-weight: 600;
+			font-size: 14px;
+			margin-bottom: 5px;
+		}
+
+		.news-text {
+			color: #4a5568;
+			font-size: 15px;
+		}
+
+		/* モーダル */
 		.modal {
 			display: none;
 			position: fixed;
 			z-index: 1000;
-			padding: 20px;
 			left: 0;
 			top: 0;
 			width: 100%;
 			height: 100%;
-			background-color: rgba(0, 0, 0, 0.5);
+			background-color: rgba(0, 0, 0, 0.6);
+			backdrop-filter: blur(5px);
 			overflow-y: auto;
+			animation: fadeIn 0.3s ease;
+		}
+
+		@keyframes fadeIn {
+			from { opacity: 0; }
+			to { opacity: 1; }
 		}
 
 		.modal-content {
-			background-color: #fff9f0;
-			margin: auto;
-			padding: 25px 20px;
-			border: 2px solid #ffb347;
-			width: 100%;
-			max-width: 400px;
-			border-radius: 12px;
-			text-align: center;
-			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-			animation: fadeIn 0.3s ease-in-out;
-			position: relative;
-			top: 50%;
-			transform: translateY(-50%);
+			background: white;
+			margin: 5% auto;
+			padding: 40px;
+			width: 90%;
+			max-width: 500px;
+			border-radius: 24px;
+			box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+			animation: slideUp 0.4s ease;
 		}
 
-		.chat-modal-content {
-			background-color: #ffffff;
-			margin: 0;
-			padding: 0;
-			border: none;
-			width: 100%;
-			max-width: 600px;
-			height: 90vh;
-			max-height: 90vh;
-			border-radius: 15px;
-			box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-			display: flex;
-			flex-direction: column;
-			animation: fadeIn 0.3s ease-in-out;
-			position: fixed;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-		}
-
-		.chat-header {
-			background: linear-gradient(135deg, #9C27B0, #7B1FA2);
-			color: white;
-			padding: 18px 15px;
-			border-radius: 15px 15px 0 0;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			flex-shrink: 0;
-		}
-
-		.chat-header h2 {
-			margin: 0;
-			font-size: clamp(1.1em, 4vw, 1.5em);
+		@keyframes slideUp {
+			from { transform: translateY(50px); opacity: 0; }
+			to { transform: translateY(0); opacity: 1; }
 		}
 
 		.close-btn {
-			color: white;
-			font-size: 28px;
+			color: #aaa;
+			float: right;
+			font-size: 32px;
 			font-weight: bold;
 			cursor: pointer;
-			background: none;
-			border: none;
-			padding: 0;
-			-webkit-tap-highlight-color: transparent;
+			transition: color 0.3s ease;
+			line-height: 1;
 		}
 
-		.close-btn:active {
-			color: #ffccff;
+		.close-btn:hover {
+			color: #667eea;
+		}
+
+		/* チャットモーダル */
+		.chat-modal-content {
+			background: white;
+			margin: 2% auto;
+			width: 95%;
+			max-width: 800px;
+			height: 90vh;
+			border-radius: 24px;
+			box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+		.chat-header {
+			background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+			color: white;
+			padding: 25px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.chat-header h2 {
+			font-size: clamp(20px, 4vw, 26px);
+			font-weight: 700;
 		}
 
 		.chat-messages {
 			flex: 1;
 			overflow-y: auto;
-			padding: 15px;
-			background-color: #f5f5f5;
-			-webkit-overflow-scrolling: touch;
+			padding: 25px;
+			background: #f7fafc;
 		}
 
 		.message {
-			margin-bottom: 15px;
+			margin-bottom: 20px;
 			display: flex;
-			width: 100%;
+			animation: messageSlide 0.3s ease;
 		}
 
-		.message.ai {
-			justify-content: flex-start;
+		@keyframes messageSlide {
+			from { opacity: 0; transform: translateY(10px); }
+			to { opacity: 1; transform: translateY(0); }
 		}
 
-		.message.user {
-			justify-content: flex-end;
-		}
+		.message.ai { justify-content: flex-start; }
+		.message.user { justify-content: flex-end; }
 
 		.message-bubble {
-			max-width: 85%;
-			padding: 12px 16px;
-			border-radius: 18px;
+			max-width: 75%;
+			padding: 15px 20px;
+			border-radius: 20px;
 			word-wrap: break-word;
 			white-space: pre-wrap;
-			font-size: 14px;
-			line-height: 1.5;
+			font-size: 15px;
+			line-height: 1.6;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 		}
 
 		.message.ai .message-bubble {
-			background-color: #f0f0f0;
-			color: #333;
-			border: 1px solid #ddd;
-			border-bottom-left-radius: 4px;
-			text-align: left;
+			background: white;
+			color: #2d3748;
+			border-bottom-left-radius: 5px;
 		}
 
 		.message.user .message-bubble {
-			background-color: #9C27B0;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 			color: white;
-			border-bottom-right-radius: 4px;
-			text-align: left;
+			border-bottom-right-radius: 5px;
 		}
 
 		.chat-input-container {
-			padding: 12px;
-			background-color: white;
-			border-top: 1px solid #ddd;
-			border-radius: 0 0 15px 15px;
+			padding: 20px;
+			background: white;
+			border-top: 1px solid #e2e8f0;
 			display: flex;
-			gap: 8px;
-			flex-shrink: 0;
+			gap: 15px;
 		}
 
 		.chat-input {
 			flex: 1;
-			padding: 12px;
-			border: 1px solid #ddd;
+			padding: 15px 20px;
+			border: 2px solid #e2e8f0;
 			border-radius: 25px;
-			font-size: 16px;
+			font-size: 15px;
 			outline: none;
-			-webkit-appearance: none;
+			transition: border-color 0.3s ease;
 		}
 
 		.chat-input:focus {
-			border-color: #9C27B0;
+			border-color: #667eea;
 		}
 
 		.send-btn {
-			background-color: #9C27B0;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 			color: white;
 			border: none;
-			padding: 12px 20px;
+			padding: 15px 30px;
 			border-radius: 25px;
 			cursor: pointer;
-			font-weight: bold;
-			transition: background-color 0.2s;
-			-webkit-tap-highlight-color: transparent;
-			font-size: 14px;
+			font-weight: 600;
+			transition: all 0.3s ease;
+			box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 		}
 
-		.send-btn:active {
-			background-color: #7B1FA2;
+		.send-btn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 		}
 
 		.send-btn:disabled {
-			background-color: #ccc;
+			background: #cbd5e0;
 			cursor: not-allowed;
+			transform: none;
 		}
 
 		.typing-indicator {
 			display: none;
-			padding: 10px 15px;
-			color: #666;
+			padding: 15px 20px;
+			color: #718096;
 			font-style: italic;
-			font-size: 14px;
-			background-color: #f5f5f5;
 		}
 
-		@keyframes fadeIn {
-			from {
-				opacity: 0;
-				transform: translateY(-20px);
-			}
-			to {
-				opacity: 1;
-				transform: translateY(0);
-			}
+		/* レスポンシブ */
+		@media (max-width: 768px) {
+			.container { padding: 15px; }
+			.header { padding: 15px 20px; }
+			.fridge-card { padding: 30px 20px; }
+			.panel-grid { grid-template-columns: repeat(2, 1fr); }
+			.modal-content { padding: 30px 20px; margin: 10% auto; }
+			.chat-modal-content { width: 100%; height: 100vh; margin: 0; border-radius: 0; }
 		}
 
-		/* タブレット・PC（2カラムレイアウト） */
-		@media screen and (min-width: 768px) {
-			.room {
-				padding: 30px;
-			}
-
-			.main-content {
-				grid-template-columns: 1.8fr 1fr;
-			}
-
-			.refrigerator-button {
-				min-height: 380px;
-				padding: 40px 20px;
-			}
-
-			.refrigerator-icon {
-				font-size: 160px;
-			}
-
-			.modal-content {
-				padding: 30px 25px;
-			}
-
-			.chat-modal-content {
-				height: 80vh;
-			}
-
-			.message-bubble {
-				max-width: 70%;
-			}
-
-			.panel-item {
-				min-height: 120px;
-			}
+		@media (max-width: 480px) {
+			.main-grid { grid-template-columns: 1fr; }
+			.panel-grid { gap: 15px; }
+			.fridge-icon { font-size: 80px; }
 		}
 
-		/* スマートフォン縦向き */
-		@media screen and (max-width: 767px) {
-			body {
-				padding: 10px;
-			}
-
-			.room {
-				padding: 15px 12px;
-			}
-
-			h1 {
-				letter-spacing: 1px;
-				margin-bottom: 20px;
-			}
-
-			.refrigerator-button {
-				min-height: 300px;
-			}
-
-			.refrigerator-icon {
-				font-size: 120px;
-			}
-
-			.panel-item {
-				min-height: 90px;
-				padding: 12px 8px;
-			}
-
-			.panel-icon {
-				font-size: 28px;
-			}
-		}
-
-		/* 小型スマートフォン */
-		@media screen and (max-width: 375px) {
-			body {
-				padding: 8px;
-			}
-
-			.room {
-				padding: 12px 10px;
-			}
-
-			.refrigerator-button {
-				min-height: 280px;
-				padding: 30px 15px;
-			}
-
-			.refrigerator-icon {
-				font-size: 100px;
-			}
-
-			.event-section,
-			.calendar-section,
-			.news-section {
-				margin-top: 20px;
-			}
-
-			.controller-panel {
-				padding: 15px 12px;
-			}
-
-			.panel-item {
-				min-height: 85px;
-				padding: 10px 8px;
-			}
-
-			.panel-icon {
-				font-size: 24px;
-			}
-		}
-
-		/* 横向き対応 */
-		@media screen and (max-height: 500px) and (orientation: landscape) {
-			.refrigerator-button {
-				min-height: 180px;
-			}
-
-			.chat-modal-content {
-				height: 95vh;
-			}
-
-			h1 {
-				font-size: 24px;
-				margin-bottom: 15px;
-			}
-
-			.event-section,
-			.calendar-section {
-				margin-top: 20px;
-				padding: 15px;
-			}
-		}
-
-		/* FullCalendarのレスポンシブ調整 */
+		/* FullCalendar カスタマイズ */
 		.fc {
-			font-size: 0.85em;
+			font-family: inherit;
 		}
 
-		.fc .fc-toolbar-title {
-			font-size: 1.2em;
+		.fc .fc-button-primary {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			border: none;
 		}
 
-		.fc .fc-daygrid-day-number {
-			font-size: 0.9em;
-			padding: 2px;
-		}
-
-		.fc .fc-col-header-cell-cushion {
-			padding: 4px 2px;
-		}
-
-		.fc .fc-daygrid-day-top {
-			flex-direction: row;
-			justify-content: center;
-		}
-
-		@media screen and (max-width: 767px) {
-			.fc {
-				font-size: 0.75em;
-			}
-
-			.fc .fc-toolbar {
-				flex-direction: column;
-				gap: 8px;
-				margin-bottom: 12px !important;
-			}
-
-			.fc .fc-toolbar-chunk {
-				display: flex;
-				justify-content: center;
-			}
-
-			.fc .fc-toolbar-title {
-				font-size: 1em;
-			}
-
-			.fc .fc-button {
-				padding: 4px 8px;
-				font-size: 0.9em;
-			}
-
-			.fc .fc-daygrid-day-number {
-				font-size: 0.85em;
-				padding: 1px;
-			}
-
-			.fc .fc-col-header-cell-cushion {
-				padding: 2px 1px;
-				font-size: 0.8em;
-			}
-
-			.fc .fc-daygrid-day-frame {
-				min-height: 35px;
-			}
-
-			.fc .fc-daygrid-event {
-				font-size: 0.75em;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-		}
-
-		@media screen and (max-width: 375px) {
-			.fc {
-				font-size: 0.7em;
-			}
-
-			.fc .fc-daygrid-day-frame {
-				min-height: 30px;
-			}
-
-			.fc .fc-daygrid-day-number {
-				font-size: 0.8em;
-			}
+		.fc .fc-button-primary:hover {
+			background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
 		}
 	</style>
 </head>
-
 <body>
-	<div class="room">
-		<div class="header-controls">
-			<form method="post" action="/logout">
-				<button type="submit" class="logout-button" title="ログアウト">
+	<div class="container">
+		<!-- ヘッダー -->
+		<div class="header">
+			<div class="logo">🏠 Rei Concierge</div>
+			<form method="post" action="/logout" style="margin: 0;">
+				<button type="submit" class="logout-button">
 					<i class="fa-solid fa-right-from-bracket"></i> ログアウト
 				</button>
 			</form>
 		</div>
 
-		<h1>Rei Concierge</h1>
+		<!-- メインコンテンツ -->
+		<div class="main-grid">
+			<!-- 冷蔵庫カード -->
+			<form method="get" action="/selectFood" style="margin: 0;">
+				<button type="submit" class="fridge-card">
+					<i class="fa-solid fa-house fridge-icon"></i>
+					<div class="fridge-title">冷蔵庫</div>
+					<div class="fridge-subtitle">食材の管理・登録</div>
+				</button>
+			</form>
 
-		<div class="main-content">
-			<div class="refrigerator-section">
-				<form method="get" action="/selectFood">
-					<button type="submit" class="refrigerator-button" title="食材の選択・登録">
-						<div class="visual">
-							<i class="fa-solid fa-house refrigerator-icon"></i>
-						</div>
-						<span class="refrigerator-label">冷蔵庫</span>
+			<!-- パネルグリッド -->
+			<div class="panel-grid">
+				<form method="get" action="/waste-rate" style="margin: 0;">
+					<button type="submit" class="panel-card waste">
+						<i class="fa-solid fa-chart-pie panel-icon"></i>
+						<div class="panel-label">ロス率</div>
+					</button>
+				</form>
+
+				<form method="post" action="/shoppingList" style="margin: 0;">
+					<button type="submit" class="panel-card shopping">
+						<i class="fa-solid fa-bag-shopping panel-icon"></i>
+						<div class="panel-label">買い物リスト</div>
+					</button>
+				</form>
+
+				<button type="button" class="panel-card ai" id="openAiChat">
+					<i class="fa-solid fa-robot panel-icon"></i>
+					<div class="panel-label">レシピAI</div>
+				</button>
+
+				<form method="post" action="/menuManageUser" style="margin: 0;">
+					<button type="submit" class="panel-card settings">
+						<i class="fa-solid fa-user-gear panel-icon"></i>
+						<div class="panel-label">ユーザー設定</div>
 					</button>
 				</form>
 			</div>
-
-			<div class="controller-panel">
-				<h2>Management Panel</h2>
-				<div class="panel-grid">
-					<form method="get" action="/waste-rate">
-						<button type="submit" class="panel-item waste-rate-button" title="食品ロス率の確認">
-							<i class="fa-solid fa-chart-pie panel-icon"></i>
-							<span class="label">ロス率</span>
-						</button>
-					</form>
-					<form method="post" action="/shoppingList">
-						<button type="submit" class="panel-item shopping-list-button" title="買い物リストの管理">
-							<i class="fa-solid fa-bag-shopping panel-icon"></i>
-							<span class="label">リスト</span>
-						</button>
-					</form>
-					<button type="button" class="panel-item ai-chat-button" id="openAiChat" title="AIレシピ検索">
-						<i class="fa-solid fa-robot panel-icon"></i>
-						<span class="label">レシピAI</span>
-					</button>
-					<form method="post" action="/menuManageUser">
-						<button type="submit" class="panel-item user-manage-button" title="ユーザー設定・管理">
-							<i class="fa-solid fa-user-gear panel-icon"></i>
-							<span class="label">設定</span>
-						</button>
-					</form>
-				</div>
-			</div>
 		</div>
 
-		<div class="event-section" id="halloweenEvent">
-			<h3>🎃 ハロウィン限定レシピ公開中!</h3>
-			<p>かぼちゃを使ったスイーツやスープを楽しもう!</p>
+		<!-- イベントカード -->
+		<div class="event-card" id="halloweenEvent">
+			<div class="event-title">🎃 ハロウィン限定レシピ公開中!</div>
+			<div class="event-desc">かぼちゃを使ったスイーツやスープを楽しもう!</div>
 		</div>
 
+		<!-- カレンダー -->
 		<div class="calendar-section">
-			<h3>📅 賞味期限カレンダー</h3>
+			<div class="section-title">📅 賞味期限カレンダー</div>
 			<div id="calendar"></div>
 		</div>
 
+		<!-- ニュース -->
 		<div class="news-section">
-			<div class="news-title">お知らせ</div>
-			<div class="news-card"><strong>2025/10/22</strong>　レシピアシスタントAIが使えるようになりました！</div>
-			<div class="news-card"><strong>2025/10/22</strong>　🎃ハロウィン限定レシピを公開しました!</div>
-			<div class="news-card"><strong>2025/10/21</strong>　メンテナンスのお知らせ（10/22 0:00〜4:00）</div>
-			<div class="news-card"><strong>2025/10/20</strong>　新デザインをリリースしました!</div>
+			<div class="section-title">📰 お知らせ</div>
+			<div class="news-item">
+				<div class="news-date">2025/11/22</div>
+				<div class="news-text">レシピアシスタントAIが使えるようになりました！</div>
+			</div>
+			<div class="news-item">
+				<div class="news-date">2025/11/20</div>
+				<div class="news-text">🎃ハロウィン限定レシピを公開しました!</div>
+			</div>
+			<div class="news-item">
+				<div class="news-date">2025/11/18</div>
+				<div class="news-text">新デザインをリリースしました!</div>
+			</div>
+			<div class="news-item">
+				<div class="news-date">2025/11/15</div>
+				<div class="news-text">食品ロス率の計算機能を改善しました</div>
+			</div>
 		</div>
 	</div>
 
@@ -773,15 +579,15 @@
 	<div id="recipeModal" class="modal">
 		<div class="modal-content">
 			<span class="close-btn" data-modal="recipeModal">&times;</span>
-			<h2>🎃 ハロウィン限定レシピ</h2>
-			<p><strong>かぼちゃのクリーミースープ</strong></p>
-			<ul style="text-align:left; margin:0 auto; display:inline-block;">
+			<h2 style="color: #667eea; margin-bottom: 20px;">🎃 ハロウィン限定レシピ</h2>
+			<h3 style="margin-bottom: 15px;">かぼちゃのクリーミースープ</h3>
+			<ul style="text-align:left; margin: 20px 0; line-height: 2;">
 				<li>かぼちゃ … 200g</li>
 				<li>牛乳 … 150ml</li>
 				<li>バター … 大さじ1</li>
 				<li>塩 … 少々</li>
 			</ul>
-			<p style="margin-top:10px;">🫕 かぼちゃを柔らかく煮て、ミキサーでペースト状にし、牛乳とバターを加えて温めたら完成！</p>
+			<p style="margin-top:20px; line-height: 1.8;">🫕 かぼちゃを柔らかく煮て、ミキサーでペースト状にし、牛乳とバターを加えて温めたら完成！</p>
 		</div>
 	</div>
 
@@ -790,12 +596,12 @@
 		<div class="chat-modal-content">
 			<div class="chat-header">
 				<h2><i class="fa-solid fa-robot"></i> レシピアシスタントAI</h2>
-				<button class="close-btn" data-modal="aiChatModal">&times;</button>
+				<button class="close-btn" data-modal="aiChatModal" style="color: white; background: none; border: none;">&times;</button>
 			</div>
 			<div class="chat-messages" id="chatMessages">
 				<div class="message ai">
 					<div class="message-bubble">
-						<p>何かお手伝いできることはありますか?<br>(※返信に時間がかかる場合がございます)</p>
+						こんにちは！何かお手伝いできることはありますか？🍳<br><br>※返信に時間がかかる場合がございます
 					</div>
 				</div>
 			</div>
@@ -854,17 +660,14 @@
 
 		// モーダル制御
 		document.addEventListener('DOMContentLoaded', () => {
-			// ハロウィンイベントクリック
 			document.getElementById('halloweenEvent').addEventListener('click', () => {
 				document.getElementById('recipeModal').style.display = 'block';
 			});
 
-			// AIチャットオープン
 			document.getElementById('openAiChat').addEventListener('click', () => {
 				document.getElementById('aiChatModal').style.display = 'block';
 			});
 
-			// モーダルを閉じる
 			document.querySelectorAll('.close-btn').forEach(btn => {
 				btn.addEventListener('click', (e) => {
 					const modalId = e.target.dataset.modal;
@@ -872,7 +675,6 @@
 				});
 			});
 
-			// 背景クリックで閉じる
 			window.addEventListener('click', (e) => {
 				if (e.target.classList.contains('modal')) {
 					e.target.style.display = 'none';
@@ -881,7 +683,7 @@
 		});
 
 		// AIチャット機能
-		const GEMINI_API_KEY = 'AIzaSyDKVQTeSmmFLtdng-PQvervQAAiity26QQ';
+		const GEMINI_API_KEY = 'YOUR_API_KEY_HERE';
 		const chatMessages = document.getElementById('chatMessages');
 		const chatInput = document.getElementById('chatInput');
 		const sendBtn = document.getElementById('sendBtn');
@@ -892,8 +694,8 @@
 			const message = chatInput.value.trim();
 			if (!message) return;
 
-			if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
-				addMessage('⚠️ APIキーが設定されていません。HTMLファイルの GEMINI_API_KEY を設定してください。', 'ai');
+			if (GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+				addMessage('⚠️ APIキーが設定されていません。サーバー側で設定してください。', 'ai');
 				return;
 			}
 
@@ -977,5 +779,4 @@
 		});
 	</script>
 </body>
-
 </html>
