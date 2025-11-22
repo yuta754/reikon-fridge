@@ -3,6 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>アカウント設定</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -17,10 +18,14 @@
 			--input-border: #cccccc;
 		}
 
+		* {
+			box-sizing: border-box;
+		}
+
 		body {
 			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 			margin: 0;
-			padding: 0;
+			padding: 20px;
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -34,17 +39,15 @@
 			color: #333;
 		}
 
-		/* ★ 画面共通カード（縦を短めに調整） */
+		/* 画面共通カード */
 		.account-container {
 			background-color: var(--form-background);
 			padding: 40px;
-			/* ← 60px から詰めた */
 			border-radius: 12px;
 			box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 			text-align: center;
 			width: 100%;
 			max-width: 520px;
-			box-sizing: border-box;
 		}
 
 		/* タイトル */
@@ -54,7 +57,6 @@
 			justify-content: center;
 			gap: 12px;
 			margin-bottom: 28px;
-			/* ← 36px から減らした */
 		}
 
 		h1 {
@@ -78,11 +80,13 @@
 			gap: 20px;
 			justify-items: center;
 			margin-bottom: 24px;
-			/* ← 30px より少し詰めた */
 		}
 
 		.menu-grid a {
 			text-decoration: none;
+			width: 100%;
+			display: flex;
+			justify-content: center;
 		}
 
 		/* 青パネル（更新 / 削除） */
@@ -121,9 +125,7 @@
 			display: flex;
 			flex-direction: column;
 			gap: 16px;
-			/* ← 20px から少し詰め */
 			margin-top: 32px;
-			/* ← 40px から詰め */
 		}
 
 		/* 共通フル幅ボタン */
@@ -164,6 +166,153 @@
 		.logout-button:hover {
 			background-color: #c71f31;
 			transform: translateY(-3px);
+		}
+
+		/* スマホ対応 */
+		@media (max-width: 768px) {
+			body {
+				padding: 15px;
+			}
+
+			.account-container {
+				padding: 30px 20px;
+			}
+
+			.title-row {
+				margin-bottom: 24px;
+			}
+
+			h1 {
+				font-size: 1.6em;
+			}
+
+			.title-icon {
+				font-size: 1.5em;
+			}
+
+			.menu-grid {
+				gap: 15px;
+				margin-bottom: 20px;
+			}
+
+			.panel-item {
+				width: 130px;
+				height: 110px;
+			}
+
+			.panel-icon {
+				font-size: 2em;
+				margin-bottom: 8px;
+			}
+
+			.label {
+				font-size: 0.95em;
+			}
+
+			.actions-stack {
+				gap: 14px;
+				margin-top: 28px;
+			}
+
+			.fullwidth-btn {
+				padding: 11px 0;
+				font-size: 1em;
+			}
+		}
+
+		/* 小型スマホ対応 */
+		@media (max-width: 480px) {
+			body {
+				padding: 12px;
+			}
+
+			.account-container {
+				padding: 25px 15px;
+			}
+
+			.title-row {
+				margin-bottom: 20px;
+				gap: 10px;
+			}
+
+			h1 {
+				font-size: 1.4em;
+				padding-bottom: 4px;
+			}
+
+			.title-icon {
+				font-size: 1.3em;
+			}
+
+			.menu-grid {
+				gap: 12px;
+				margin-bottom: 18px;
+			}
+
+			.panel-item {
+				width: 115px;
+				height: 100px;
+			}
+
+			.panel-icon {
+				font-size: 1.8em;
+				margin-bottom: 6px;
+			}
+
+			.label {
+				font-size: 0.9em;
+				margin-top: 4px;
+			}
+
+			.actions-stack {
+				gap: 12px;
+				margin-top: 24px;
+			}
+
+			.fullwidth-btn {
+				padding: 10px 0;
+				font-size: 0.95em;
+				gap: 8px;
+			}
+		}
+
+		/* 横向き対応 */
+		@media (max-height: 600px) and (orientation: landscape) {
+			body {
+				padding: 10px;
+				align-items: flex-start;
+			}
+
+			.account-container {
+				margin: 10px auto;
+				padding: 20px 15px;
+			}
+
+			.title-row {
+				margin-bottom: 16px;
+			}
+
+			h1 {
+				font-size: 1.4em;
+			}
+
+			.menu-grid {
+				margin-bottom: 16px;
+			}
+
+			.panel-item {
+				height: 90px;
+			}
+
+			.actions-stack {
+				margin-top: 20px;
+				gap: 10px;
+			}
+
+			.fullwidth-btn {
+				padding: 9px 0;
+				font-size: 0.9em;
+			}
 		}
 	</style>
 </head>
