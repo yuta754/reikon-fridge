@@ -14,10 +14,9 @@
 			--accent: #38bdf8;
 			--radius: 14px;
 			font-family: Inter, system-ui, -apple-system, "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", sans-serif;
-      		/* グラデーションの色定義 */
-     		--gradient-top: #cce7ff; 
-      		--gradient-middle: #f9fcff;
-      		--gradient-bottom: #ffffff;
+			--gradient-top: #cce7ff;
+			--gradient-middle: #f9fcff;
+			--gradient-bottom: #ffffff;
 		}
 
 		* {
@@ -32,17 +31,16 @@
 			display: flex;
 			justify-content: center;
 			min-height: 100vh;
-      		/* 縦グラデーション */
-      		background: linear-gradient(to bottom, var(--gradient-top) 0%, var(--gradient-middle) 50%, var(--gradient-bottom) 100%);
+			background: linear-gradient(to bottom, var(--gradient-top) 0%, var(--gradient-middle) 50%, var(--gradient-bottom) 100%);
 		}
 
 		.app {
-			width: 1100px; 
-			margin: 0 auto; 
-			background-color: #FFFFFF; 
-			padding: 30px; 
-			border: 1px solid #C8C8C8; 
-			border-radius: 8px; 
+			width: 1100px;
+			margin: 0 auto;
+			background-color: #FFFFFF;
+			padding: 30px;
+			border: 1px solid #C8C8C8;
+			border-radius: 8px;
 			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 		}
 
@@ -51,6 +49,8 @@
 			align-items: center;
 			justify-content: space-between;
 			margin-bottom: 12px;
+			flex-wrap: wrap;
+			gap: 12px;
 		}
 
 		.brand {
@@ -114,9 +114,23 @@
 			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 		}
 
+		.avatar {
+			width: 54px;
+			height: 54px;
+			border-radius: 10px;
+			background: linear-gradient(135deg, var(--accent), #5eead4);
+			display: grid;
+			place-items: center;
+			font-size: 26px;
+			margin-bottom: 12px;
+		}
+
 		.meta h3 {
 			margin: 0;
 			font-size: 16px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		.meta p {
@@ -129,7 +143,8 @@
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			margin-top: 10px;
+			margin-top: 12px;
+			gap: 8px;
 		}
 
 		.buy-btn,
@@ -141,6 +156,8 @@
 			color: white;
 			cursor: pointer;
 			transition: background-color .2s ease, transform .1s ease;
+			white-space: nowrap;
+			flex: 1;
 		}
 
 		.buy-btn {
@@ -181,6 +198,7 @@
 			transform: translateY(20px);
 			transition: all 0.6s ease;
 			z-index: 1000;
+			border: none;
 		}
 
 		.add-food-btn.show {
@@ -192,6 +210,176 @@
 		.add-food-btn:hover {
 			background: linear-gradient(135deg, #16a34a, #22c55e);
 			transform: translateY(-2px);
+		}
+
+		.add-symbol {
+			font-size: 22px;
+		}
+
+		/* スマホ対応 */
+		@media (max-width: 768px) {
+			body {
+				padding: 12px;
+			}
+
+			.app {
+				width: 100%;
+				padding: 15px;
+			}
+
+			.header {
+				flex-direction: column;
+				align-items: stretch;
+			}
+
+			.brand {
+				justify-content: space-between;
+				width: 100%;
+			}
+
+			.brand:last-child {
+				justify-content: flex-end;
+			}
+
+			h1 {
+				font-size: 18px;
+			}
+
+			.logo {
+				width: 40px;
+				height: 40px;
+				font-size: 16px;
+			}
+
+			.back-btn {
+				padding: 6px 10px;
+				font-size: 13px;
+			}
+
+			.grid {
+				grid-template-columns: 1fr;
+				gap: 12px;
+				margin-top: 15px;
+			}
+
+			.card {
+				padding: 14px;
+			}
+
+			.avatar {
+				width: 48px;
+				height: 48px;
+				font-size: 24px;
+				margin-bottom: 10px;
+			}
+
+			.meta h3 {
+				font-size: 15px;
+			}
+
+			.meta p {
+				font-size: 12px;
+			}
+
+			.card-footer {
+				margin-top: 10px;
+				gap: 6px;
+			}
+
+			.buy-btn,
+			.delete-btn {
+				padding: 7px 10px;
+				font-size: 12px;
+			}
+
+			.add-food-btn {
+				left: 15px;
+				bottom: 20px;
+				padding: 10px 16px;
+				font-size: 14px;
+			}
+
+			.add-symbol {
+				font-size: 18px;
+			}
+
+			.add-text {
+				font-size: 14px;
+			}
+		}
+
+		/* 小型スマホ対応 */
+		@media (max-width: 480px) {
+			body {
+				padding: 10px;
+			}
+
+			.app {
+				padding: 12px;
+			}
+
+			h1 {
+				font-size: 16px;
+			}
+
+			.logo {
+				width: 36px;
+				height: 36px;
+				font-size: 14px;
+			}
+
+			.back-btn {
+				padding: 5px 8px;
+				font-size: 12px;
+			}
+
+			.card {
+				padding: 12px;
+			}
+
+			.avatar {
+				width: 44px;
+				height: 44px;
+				font-size: 22px;
+			}
+
+			.meta h3 {
+				font-size: 14px;
+			}
+
+			.meta p {
+				font-size: 11px;
+			}
+
+			.buy-btn,
+			.delete-btn {
+				padding: 6px 8px;
+				font-size: 11px;
+			}
+
+			.add-food-btn {
+				padding: 9px 14px;
+				font-size: 13px;
+			}
+
+			.add-symbol {
+				font-size: 16px;
+			}
+		}
+
+		/* 横向き対応 */
+		@media (max-height: 600px) and (orientation: landscape) {
+			body {
+				padding: 10px;
+			}
+
+			.app {
+				margin: 10px auto;
+			}
+
+			.add-food-btn {
+				bottom: 15px;
+			}
 		}
 	</style>
 </head>
@@ -207,7 +395,7 @@
 				</div>
 			</div>
 			<div class="brand">
-				<form action="/logout" method="post">
+				<form action="/logout" method="post" style="margin: 0;">
 					<button type="submit" class="back-btn">
 						<i class="fa-solid fa-right-from-bracket"></i> ログアウト
 					</button>
@@ -217,7 +405,7 @@
 
 		<section class="grid">
 			<article class="card" th:attr="data-genre-id=${food.genreId}" th:each="food : ${shoppingList}">
-				<div class="avatar"><span class="icon"></span></div>
+				<div class="avatar"><span class="icon">🛒</span></div>
 				<div class="meta">
 					<h3 th:text="${food.foodName}">牛乳</h3>
 					<span th:if="${food.date != null}">
@@ -235,10 +423,10 @@
 			</article>
 		</section>
 
-		<div id="addFoodBtn" class="add-food-btn" onclick="goToFridge()">
-			<span class="add-symbol">＋</span>
+		<button id="addFoodBtn" class="add-food-btn" onclick="goToFridge()">
+			<span class="add-symbol">🏠</span>
 			<span class="add-text">冷蔵庫を見に行く</span>
-		</div>
+		</button>
 	</main>
 
 	<script>
@@ -254,9 +442,9 @@
 
 		function goBack() {
 			if (document.referrer) {
-				window.history.back(); // 前のページに戻る
+				window.history.back();
 			} else {
-				window.location.href = "/menu"; // 直接アクセス時はメニューへ
+				window.location.href = "/menu";
 			}
 		}
 
@@ -287,13 +475,13 @@
 				setTimeout(() => cardElement.remove(), 400);
 			}
 
-			// 削除したIDを記録するところ
+			// 削除したIDを記録
 			let hiddenItems = JSON.parse(localStorage.getItem("hiddenItems")) || [];
 			hiddenItems.push(id);
 			localStorage.setItem("hiddenItems", JSON.stringify(hiddenItems));
 		}
 
-		// ページ読み込み時に非表示リストを反映する
+		// ページ読み込み時に非表示リストを反映
 		document.addEventListener("DOMContentLoaded", () => {
 			const hiddenItems = JSON.parse(localStorage.getItem("hiddenItems")) || [];
 			const boughtItems = JSON.parse(localStorage.getItem("boughtItems")) || [];
