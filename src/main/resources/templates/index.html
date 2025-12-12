@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${appName}">Rei Concierge</title>
+
+    <!-- 3秒後にログインに自動遷移（ThymeleafでURL生成） -->
+    <meta http-equiv="refresh" th:content="'3;URL=' + @{/login}">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f3f3f3;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            font-size: 32px;
+            color: #333;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1 th:text="${appName}">Rei Concierge</h1>
+
+</body>
+</html>

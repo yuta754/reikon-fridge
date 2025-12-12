@@ -31,8 +31,9 @@ public class LoginMenuController {
 	}
 	
 	@GetMapping("/")
-    public String root() {
-        return "login"; // templates/login.html を返す
+    public String index(Model model) {
+		model.addAttribute("appName", "Rei Concierge");)
+        return "index"; 
     }
 
 	/**
